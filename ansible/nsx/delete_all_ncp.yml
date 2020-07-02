@@ -1,0 +1,54 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars_files:
+    - vars.yml
+  tasks:
+    # - name: Get all Segment
+    #   shell: "./nsxt.py --user {{ nsx_username }} --nsx-manager {{ nsx_manager }} --endpoint policy/api/v1/infra/segments --cluster {{ ncp_cluster }}"
+    #   register: segments
+    
+    - name: Get Ip blocks
+      shell: "./nsxt.py --user {{ nsx_username }} --nsx-manager {{ nsx_manager }} --endpoint policy/api/v1/infra/ip-blocks --cluster {{ ncp_cluster }}"
+      register: ip_blocks
+
+    - name: Get Ip pools
+      shell: "./nsxt.py --user {{ nsx_username }} --nsx-manager {{ nsx_manager }} --endpoint policy/api/v1/infra/ip-pools --cluster {{ ncp_cluster }}"
+      register: ip_pools
+    
+    # - name: Delete Ip blocks
+    #   nsxt_ip_pools:
+    #     hostname: "{{ nsx_manager }}"
+    #     username: "{{ nsx_username }}"
+    #     password: "{{ nsx_password }}"
+    #     state: "absent"
+    #     validate_certs: "no"
+    #     display_name: "{{ item.display_name }}"
+    #   with_items:
+    #     - "{{ (ip_blocks.stdout | from_json).results }}"
+
+    - name: Delete Ip pool
+      nsxt_ip_pools:
+        hostname: "{{ nsx_manager }}"
+        username: "{{ nsx_username }}"
+        password: "{{ nsx_password }}"
+        state: "absent"
+        validate_certs: "no"
+        display_name: "{{ item.display_name }}"
+      with_items:
+        - "{{ (ip_pools.stdout | from_json).results }}"
+
+    # - name: Delete segment
+    #   nsxt_policy_segment:
+    #     hostname: "{{ nsx_manager }}"
+    #     username: "{{ nsx_username }}"
+    #     password: "{{ nsx_password }}"
+    #     state: "absent"
+    #     validate_certs: "no"
+    #     display_name: "{{ item.display_name }}"
+    #     id: "{{ item.id }}"
+    #     delete_subresource_first: True
+    #     do_wait_till_create: True
+    #   when: item.display_name not in ignore_segments
+    #   with_items:
+    #     - "{{ (segments.stdout | from_json).results }}"

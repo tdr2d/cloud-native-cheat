@@ -1,0 +1,7 @@
+nsx_manager: 192.168.95.6
+nsx_username: admin
+nsx_password: "{{ lookup('env', 'NSXT_PASSWORD') }}"
+
+transport_zone: 'global-overlay'
+tier1: t1default 
+ncp_cluster: ocp4-nsx

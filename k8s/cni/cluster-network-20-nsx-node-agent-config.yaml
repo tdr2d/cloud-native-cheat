@@ -1,0 +1,389 @@
+apiVersion: v1
+data: {ncp.ini: '
+
+
+    [DEFAULT]
+
+
+    # If set to true, the logging level will be set to DEBUG instead of the
+
+    # default INFO level.
+
+    #debug = False
+
+
+    # If set to true, log output to standard error.
+
+    #use_stderr = True
+
+
+    # If set to true, use syslog for logging.
+
+    #use_syslog = False
+
+
+    # The base directory used for relative log_file paths.
+
+    #log_dir = <None>
+
+
+    # Name of log file to send logging output to.
+
+    #log_file = <None>
+
+
+    # max MB for each compressed file. Defaults to 100 MB.
+
+    #log_rotation_file_max_mb = 100
+
+
+    # Total number of compressed backup files to store. Defaults to 5.
+
+    #log_rotation_backup_count = 5
+
+
+
+
+
+    [k8s]
+
+
+    # Kubernetes API server IP address.
+
+    #apiserver_host_ip = <None>
+
+
+    # Kubernetes API server port.
+
+    #apiserver_host_port = <None>
+
+
+    # Full path of the Token file to use for authenticating with the k8s API
+
+    # server.
+
+    client_token_file = /var/run/secrets/kubernetes.io/serviceaccount/token
+
+
+    # Full path of the client certificate file to use for authenticating with
+
+    # the k8s API server. It must be specified together with
+
+    # "client_private_key_file".
+
+    #client_cert_file = <None>
+
+
+    # Full path of the client private key file to use for authenticating with
+
+    # the k8s API server. It must be specified together with
+
+    # "client_cert_file".
+
+    #client_private_key_file = <None>
+
+
+    # Specify a CA bundle file to use in verifying the k8s API server
+
+    # certificate.
+
+    ca_file = /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+
+
+    # Specify whether ingress controllers are expected to be deployed in
+
+    # hostnework mode or as regular pods externally accessed via NAT
+
+    # Choices: hostnetwork nat
+
+    #ingress_mode = hostnetwork
+
+
+    # Log level for the kubernetes adaptor
+
+    # Choices: NOTSET DEBUG INFO WARNING ERROR CRITICAL
+
+    #loglevel = <None>
+
+
+    # The default HTTP ingress port
+
+    #http_ingress_port = 80
+
+
+    # The default HTTPS ingress port
+
+    #https_ingress_port = 443
+
+
+
+    # Specify thread pool size to process resource events
+
+    #resource_watcher_thread_pool_size = 1
+
+
+    # User specified IP address for HTTP and HTTPS ingresses
+
+    #http_and_https_ingress_ip = <None>
+
+
+    # Set this to True to enable NCP to create tier1 router, first segment and
+
+    # default SNAT IP for VirtualNetwork CRD, and then create segment port for
+
+    # VM through VirtualNetworkInterface CRD.
+
+    #enable_vnet_crd = False
+
+
+    # Set this to True to enable NCP to create LoadBalancer on a Tier-1 for
+
+    # LoadBalancer CRD. This option does not support LB autoscaling.
+
+    #enable_lb_crd = False
+
+
+    # Option to set the type of baseline cluster policy. ALLOW_CLUSTER creates
+
+    # an explicit baseline policy to allow any pod to communicate any other pod
+
+    # within the cluster. ALLOW_NAMESPACE creates an explicit baseline policy
+
+    # to allow pods within the same namespace to communicate with each other.
+
+    # By default, no baseline rule will be created and the cluster will assume
+
+    # the default behavior as specified by the backend. Modification is not
+
+    # supported after the value is set.
+
+    # Choices: <None> allow_cluster allow_namespace
+
+    #baseline_policy_type = <None>
+
+
+    # Maximum number of endpoints allowed to create for a service.
+
+    #max_allowed_endpoints = 1000
+
+
+    # Set this to True to enable NCP reporting NSX backend error to k8s object
+
+    # using k8s event
+
+    #enable_ncp_event = False
+
+
+    # Set this to True to enable multus to create multiple interfaces for one
+
+    # pod. Pod annotations under prefix "k8s.v1.cni.cncf.io" cannot be modified
+
+    # after pod realized. User defined IP will not be allocated from Segment
+
+    # IPPool. "gateway" in NetworkAttachmentDefinition is not used to configure
+
+    # secondary interfaces. Default gateway of pod is configured by primary
+
+    # interface. User must define IP and/or MAC if no "ipam" is configured.Only
+
+    # available if node type is HOSTVM
+
+    #enable_multus = True
+
+
+
+    # Interval of polling loadbalancer statistics. Default to60 seconds.
+
+    #lb_statistic_monitor_interval = 60
+
+
+
+
+    [coe]
+
+
+    # Container orchestrator adaptor to plug in.
+
+    adaptor = openshift4
+
+
+    # Specify cluster for adaptor.
+
+    #cluster = k8scluster
+
+
+    # Log level for NCP operations
+
+    # Choices: NOTSET DEBUG INFO WARNING ERROR CRITICAL
+
+    #loglevel = <None>
+
+
+    # Log level for NSX API client operations
+
+    # Choices: NOTSET DEBUG INFO WARNING ERROR CRITICAL
+
+    #nsxlib_loglevel = <None>
+
+
+    # Enable SNAT for all projects in this cluster. Modification of topologies
+
+    # for existing Namespaces is not supported if this option is reset.
+
+    #enable_snat = True
+
+
+    # Option to enable profiling
+
+    #profiling = False
+
+
+    # The interval of reporting performance metrics (0 means disabled)
+
+    #metrics_interval = 0
+
+
+    # Name of log file for outputting metrics only (if not defined, use default
+
+    # logging facility)
+
+    #metrics_log_file = <None>
+
+
+    # The type of container host node
+
+    # Choices: HOSTVM BAREMETAL CLOUD WCP_WORKER
+
+    #node_type = HOSTVM
+
+
+    # The time in seconds for NCP/nsx_node_agent to recover the connection to
+
+    # NSX manager/container orchestrator adaptor/Hyperbus before exiting. If
+
+    # the value is 0, NCP/nsx_node_agent won''t exit automatically when the
+
+    # connection check fails
+
+    #connect_retry_timeout = 0
+
+
+
+    # Enable system health status report for SHA
+
+    #enable_sha = True
+
+
+
+    [nsx_kube_proxy]
+
+
+    # The way to process service configuration, set into OVS flow or write to
+
+    # nestdb,
+
+    # Choices: ovs nestdb
+
+    #config_handler = ovs
+
+
+
+
+
+    [nsx_node_agent]
+
+
+    # Prefix of node /proc and /var/run/netns path to mount on nsx_node_agent
+
+    # DaemonSet
+
+    #proc_mount_path_prefix = /host
+
+
+
+
+
+    # The log level of NSX RPC library
+
+    # Choices: NOTSET DEBUG INFO WARNING ERROR CRITICAL
+
+    #nsxrpc_loglevel = ERROR
+
+
+    # OVS bridge name
+
+    ovs_bridge = br-int
+
+
+    # The time in seconds for nsx_node_agent to wait CIF config from HyperBus
+
+    # before returning to CNI
+
+    #config_retry_timeout = 300
+
+
+    # The time in seconds for nsx_node_agent to backoff before re-using an
+
+    # existing cached CIF to serve CNI request. Must be less than
+
+    # config_retry_timeout.
+
+    #config_reuse_backoff_time = 15
+
+
+
+    # The OVS uplink OpenFlow port where to apply the NAT rules to.
+
+    ovs_uplink_port = ens192
+
+
+    # Set this to True if you want to install and use the NSX-OVS kernel
+
+    # module. If the host OS is supported, it will be installed by nsx-ncp-
+
+    # bootstrap and used by nsx-ovs container in nsx-node-agent pod. Note that
+
+    # you would have to add (uncomment) the volumes and mounts in the nsx-ncp-
+
+    # bootstrap DS and add SYS_MODULE capability in nsx-ovs container spec in
+
+    # nsx-node-agent DS. Failing to do so will result in failure of
+
+    # installation and/or kernel upgrade of NSX-OVS kernelmodule.
+
+    #use_nsx_ovs_kernel_module = False
+
+
+    # The time in seconds for nsx_node_agent to call OVS command. Please
+
+    # increase the time if OVS is in heavy load to create/delete ports
+
+    #ovs_operation_timeout = 5
+
+
+    # List of vendor id and device id of supported SRIOV VF devices
+
+    #sriov_vf_types = 19e5:a22e
+
+    #sriov_vf_types = 14e4:163e,16dc,163f,16e1,1806,16a9,16ad,16af,16d3,166f,1609,16cb
+
+    #sriov_vf_types = 177d:9713,9712
+
+    #sriov_vf_types = 15b3:1016,1004,1014,1012,6746,6778,1002,6764,0263,1018,101e,101c,101a
+
+    #sriov_vf_types = 8086:1530,1520,154c,1889,1515,10ed,152f,1f44,15c5,15b4,152e,37cd,1564,1565,1571,10ca,15a9,15a8
+
+    #sriov_vf_types = 1924:1b03,1903,1923,1803,1813,1a03
+
+
+
+    # Set to true to allow the CNI plugin to enable IPv6 container interfaces
+
+    #enable_ipv6 = False
+
+    '}
+kind: ConfigMap
+metadata:
+  labels: {version: v1}
+  name: nsx-node-agent-config
+  namespace: nsx-system

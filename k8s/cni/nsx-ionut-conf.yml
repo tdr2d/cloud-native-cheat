@@ -1,0 +1,91 @@
+---
+nsx-ncp-config
+[root@jumpbox openshift4]# cat cluster-network-17-nsx-ncp-config.yaml | grep -v -e '^$'
+apiVersion: v1
+data: {ncp.ini: '
+    [vc]
+    [coe]
+    adaptor = openshift4
+    cluster = ocp4-cluster-1
+    loglevel = WARNING
+    nsxlib_loglevel = WARNING
+    enable_snat = True
+    [DEFAULT]
+    # debug = True
+    [nsx_v3]
+    policy_nsxapi = True
+    nsx_api_managers = 172.20.21.30
+    nsx_api_user = admin
+    nsx_api_password = DHoMzYxzU5qAz6F!
+    insecure = True
+    subnet_prefix = 24
+    #v6_subnet_prefix = 64
+    log_dropped_traffic = True
+    log_firewall_traffic = DENY
+    use_native_loadbalancer = True
+    l4_lb_auto_scaling = True
+    lb_default_cert_path = /var/home/core/nsx/lb-default.crt
+    lb_priv_key_path = /var/home/core/nsx/lb-default.key
+    pool_algorithm = WEIGHTED_ROUND_ROBIN
+    #service_size = SMALL
+    # Choices: <None> cookie source_ip
+    #l7_persistence = <None>
+    #l4_persistence = source_ip
+    container_ip_blocks = 10.4.0.0/16
+    #no_snat_ip_blocks = []
+    external_ip_pools = 172.20.21.128/25
+    # tier0_gateway = t0a
+    
+    top_tier_router = T1-GW-OCP
+    single_tier_topology = True
+    overlay_tz = e37c5ab1-7b76-499e-8a0b-153020c08099
+    #dns_servers = []
+    edge_cluster = 83d91ae5-b50a-4e8e-b2d6-b5a3d2475472
+    [ha]
+    [k8s]
+    apiserver_host_ip = api.ocp4-cluster-1.cpod-pic.az-lab.shwrfr.com
+    apiserver_host_port = 6443
+    client_token_file = /var/run/secrets/kubernetes.io/serviceaccount/token
+    ca_file = /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    loglevel = WARNING
+    #enable_lb_crd = False
+    # Choices: <None> allow_cluster allow_namespace
+    baseline_policy_type = allow_cluster
+    enable_multus = True
+    '}
+kind: ConfigMap
+metadata:
+  labels: {version: v1}
+  name: nsx-ncp-config
+  namespace: nsx-system
+---
+[root@jumpbox openshift4]# cat cluster-network-20-nsx-node-agent-config.yaml | grep -v -e '^$'
+apiVersion: v1
+data: {ncp.ini: '
+    [DEFAULT]
+    #debug = False
+    [k8s]
+    apiserver_host_ip = api.ocp4-cluster-1.cpod-pic.az-lab.shwrfr.com
+    apiserver_host_port = 6443
+    client_token_file = /var/run/secrets/kubernetes.io/serviceaccount/token
+    ca_file = /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    loglevel = WARNING
+    [coe]
+    adaptor = openshift4
+    cluster = ocp4-cluster-1
+    loglevel = WARNING
+    nsxlib_loglevel = WARNING
+    node_type = HOSTVM
+    [nsx_kube_proxy]
+    config_handler = ovs
+    [nsx_node_agent]
+    ovs_bridge = br-int
+    ovs_uplink_port = ens192
+    #use_nsx_ovs_kernel_module = False
+    #enable_ipv6 = False
+    '}
+kind: ConfigMap
+metadata:
+  labels: {version: v1}
+  name: nsx-node-agent-config
+  namespace: nsx-system

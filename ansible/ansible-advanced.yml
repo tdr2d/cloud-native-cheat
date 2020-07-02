@@ -1,0 +1,19 @@
+---
+- name: Check readiness of pod
+  shell: "oc get pod {{ pod_name }} -n {{ namespace }} -o jsonpath='{.status.phase}'"
+  register: output
+  untill: 'output.stdout != "Running"'
+  retries: 5
+  delay: 3
+
+
+# Temp directory
+- name: Create a temporary directory
+  tempfile:
+    state: directory
+  register: tmp_dir
+
+- name: Remove the temporary directory
+  file:
+    path: "{{ tmp_dir.path }}"
+    state: absent
