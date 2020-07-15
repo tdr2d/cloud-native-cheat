@@ -1,0 +1,33 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: mutating-webhook
+  name: mutating-webhook
+  namespace: webhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: mutating-webhook
+  template:
+    metadata:
+      labels:
+        run: mutating-webhook
+    spec:
+      serviceAccountName: webhook
+      containers:
+      - image: docker.io/tducrotadlere/k8s-webhook:0.1
+        imagePullPolicy: Always
+        name: mutating-webhook
+        volumeMounts:
+        - name: tls-secret
+          mountPath: "/etc/secret-volume"
+        env:
+        - name: API_URL
+          value: "https://lb.ocplab.adlere.priv"
+      restartPolicy: Always
+      volumes:
+        - name: tls-secret
+          secret:
+            secretName: webhook-tls-secret

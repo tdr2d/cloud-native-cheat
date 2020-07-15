@@ -1,0 +1,15 @@
+FROM golang:alpine AS build-env       # Use go to compile
+WORKDIR /app
+ADD . /app
+RUN cd /app && go build -o goapp
+
+
+FROM alpine
+RUN apk update && \
+   apk add ca-certificates && \
+   update-ca-certificates && \
+   rm -rf /var/cache/apk/*
+WORKDIR /app
+COPY --from=build-env /app/goapp /app    # Copy binary from build image
+EXPOSE 8080
+ENTRYPOINT ./goapp
