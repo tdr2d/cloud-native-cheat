@@ -23,7 +23,7 @@ spec:
               - key: app
                 operator: In
                 values:
-                  - etcd-data-downloader
+                  - app-name
           topologyKey: kubernetes.io/hostname # spread among nodes
   #
   ## CONTAINERS
