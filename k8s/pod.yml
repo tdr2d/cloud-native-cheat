@@ -89,4 +89,16 @@ spec:
   - name: host-root-volume  	    # Volume, share directory with the node host
     hostPath:
       path: /
+  - name: projected-volume
+    projected:
+      sources:
+      - configMap:
+        name: nsx-ncp-config
+        items:
+          - {key: ncp.ini, path: ncp.ini}
+      - secret:
+        name: lb-secret
+        items:
+        - {key: tls.crt, path: lb-cert/tls.crt}
+        - {key: tls.key, path: lb-cert/tls.key}
   restartPolicy: Never
