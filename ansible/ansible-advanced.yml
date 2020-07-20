@@ -17,3 +17,12 @@
   file:
     path: "{{ tmp_dir.path }}"
     state: absent
+
+# Inline if
+secure: "{{ 'True' if item.protocol == 'SSL' else 'False' }}"
+
+# Ignore Failure/Error
+failed_when: "nitro_ret.http_response_data.status >= 400 and nitro_ret.http_response_data.status != 404"
+
+# Dynamic var lookup
+var1: "{{ lookup('vars', item.machine_type + '64').stdout  }}"
