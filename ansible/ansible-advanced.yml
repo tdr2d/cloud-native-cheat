@@ -26,3 +26,13 @@ failed_when: "nitro_ret.http_response_data.status >= 400 and nitro_ret.http_resp
 
 # Dynamic var lookup
 var1: "{{ lookup('vars', item.machine_type + '64').stdout  }}"
+
+# Json find key/value
+  vars:
+    my_json: '[{"string": "1234","index":1},{"string":"asdf","index":2}]'
+    fqdn: "1234"
+  tasks:
+    - set_fact: jq="[?contains(string, '{{ fqdn }}')]"
+    - set_fact: index="{{ my_json | from_json | json_query(jq)}}"
+    - debug: msg="{{ (index | first).index }}"
+      when: "(index | length) > 0"
