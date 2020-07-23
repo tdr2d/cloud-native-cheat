@@ -1,0 +1,10 @@
+[
+{% for e in item.endpoints %}
+    {
+        "port": "{{ e.port }}",
+        "host": "{{ e.host }}",
+        "weight": "{{ (100 / item.endpoints|length) | int }}",
+        "servername": "SRV-{{ e.host }}"
+    }{% if not loop.last %},{% endif %}
+{% endfor %}
+]

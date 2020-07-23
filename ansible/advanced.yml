@@ -1,18 +1,13 @@
 ---
-- name: Check readiness of pod
-  shell: "oc get pod {{ pod_name }} -n {{ namespace }} -o jsonpath='{.status.phase}'"
-  register: output
-  untill: 'output.stdout != "Running"'
-  retries: 5
-  delay: 3
-
+# Dynamically define variables
+set_fact:
+  mon_bindings: "{{ lookup('template', 'templates/monitor_bindings.json') }}"
 
 # Temp directory
 - name: Create a temporary directory
   tempfile:
     state: directory
   register: tmp_dir
-
 - name: Remove the temporary directory
   file:
     path: "{{ tmp_dir.path }}"
@@ -29,11 +24,24 @@ var1: "{{ lookup('vars', item.machine_type + '64').stdout  }}"
 
 # Json filter by key/value
   vars:
-    my_json: '[{"string": "1234","index":1},{"string":"asdf","index":2}]'
+    my_yaml: 
+      - {"string": "1234","index":1}
+      - {"string":"asdf","index":2}
     fqdn: "1234"
   tasks:
     - set_fact: jq="[?contains(string, '{{ fqdn }}')]"
-    - set_fact: filter="{{ my_json | from_json | json_query(jq) }}"
+    - set_fact: filter="{{ my_yaml | to_json | from_json | json_query(jq) }}" # => [{"string": "1234","index":1}]
+
+# Json remove dict key
+vars:
+  my_yaml:
+    index: 1
+    type: 2
+    name: name
+  skip_key: type
+tasks:
+  - set_fact: jq="[?key!='{{ skip_key }}']"
+  - debug: msg="{{ my_yaml | dict2items | json_query(jq) | items2dict }}"
 
 # Json max of key
-set_fact: maximum={{ json | json_query('[*].index ) | max }}
+set_fact: maximum={{ my_json | json_query('[*].index ) | max }} # => 2
