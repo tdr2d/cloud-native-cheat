@@ -13,4 +13,4 @@ install:	  ## Install dependencies for using the ansible nsx-t module
 
 delete_all_ncp:  ## Delete all openshift object
 	# ansible-playbook delete_all_ncp.yml # shit doesn't work
-	./nsxt.py --user admin --nsx-manager 192.168.95.6 --cluster ocp4-nsx --delete
+	./delete_ncp.py --user admin --nsx-manager 192.168.95.6 --cluster ocp4-nsx --delete
