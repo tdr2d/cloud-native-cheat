@@ -12,8 +12,6 @@ dd: bs: illegal numeric value -> change bs=1m to bs=1M
 dd: /dev/rdiskN: Operation not permitted -> disable SIP before continuing
 dd: /dev/rdiskN: Permission denied -> erase first with 
     sudo diskutil partitionDisk /dev/diskN 1 MBR "Free Space" "%noformat%" 100%
-
-
 EOF
 
 bootable_usb() {

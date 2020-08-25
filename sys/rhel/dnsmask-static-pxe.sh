@@ -3,6 +3,7 @@
 set -euo pipefail
 
 # Usage: ./dnsmask-static-pxe.sh http://releases.ubuntu.com/20.04.1/ubuntu-20.04.1-desktop-amd64.iso 00:50:56:a5:42:43 192.168.95.43 eth0
+#
 # Setup pxe / httpd server to boot server over pxe
 # It will download the iso, mount it and expose it content on the httpd
 
