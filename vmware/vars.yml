@@ -1,0 +1,40 @@
+# Globals
+name: thomas
+install_dir: /opt/vnested.thomas
+
+
+# Host vcenter infos
+vsphere_vcenter: 192.168.145.10
+vsphere_datacenter: Adlere
+vsphere_cluster: Adlere-WORKER
+vsphere_datastore: vsanDatastore-WORKER
+vsphere_folder: vProto5
+vsphere_resource_pool: vProto/vProto5
+vsphere_network: dVLAN_PROTO5_v95
+
+
+# ESXi template
+esxi_template: "esxi67-template"
+ks_path: nfs://192.168.95.110/public/vmware/ks.cfg
+iso_file_path: "[AdminShare] _OS/VMWare/VMware-VMvisor-Installer-6.7.0.update03-14320388.x86_64.iso" # from datastore
+
+
+# DHCP - NFS
+dhcp_template: ""
+dhcp_ip: 192.168.95.150
+dhcp_pool_start: 192.168.95.151
+dhcp_pool_end: 192.168.95.170
+netmask: 255.255.255.0
+gateway: 192.168.95.254
+dns1: 192.168.95.254
+dns2: 192.168.145.2
+
+
+# VCSA
+vcsa_iso: "[AdminShare] _OS/VMWare/VMware-VMvisor-Installer-6.7.0.update03-14320388.x86_64.iso" # from datastore
+segment: 10.0.1.1
+
+# NSX-T
+nsxt_ova: ""
+
+

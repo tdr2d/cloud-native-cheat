@@ -1,0 +1,63 @@
+{
+  "variables": {
+    "username": "{{ '{{env  `VSPHERE_USER`}}' }}",
+    "password": "{{ '{{env  `VSPHERE_PASSWORD`}}' }}"
+  },
+  "builders": [
+    {
+      "type": "vsphere-iso",
+  
+      "vcenter_server": "{{ vsphere_vcenter }}",
+      "username": "{{ '{{user  `username`}}' }}",
+      "password": "{{ '{{user  `password`}}' }}",
+      "insecure_connection": true,
+      "datacenter": "{{ vsphere_datacenter }}",
+      "cluster": "{{ vsphere_cluster }}",
+      "folder": "{{ vsphere_folder }}",
+      "resource_pool": "{{ vsphere_resource_pool }}",
+      "datastore": "{{ vsphere_datastore }}",
+  
+      "vm_name": "{{ esxi_template }}",
+      "guest_os_type": "vmkernel65Guest",
+  
+      "CPUs": "8",
+      "cpu_cores": "8",
+      "RAM": "65536",
+      "NestedHV": true,
+      "network_adapters": [
+        {
+          "network": "{{ vsphere_network }}",
+          "network_card": "vmxnet3"
+        },
+        {
+          "network": "{{ vsphere_network }}",
+          "network_card": "vmxnet3"
+        }
+      ],
+      "storage": [
+        {
+          "disk_size": 2000
+        },
+        {
+          "disk_size": 1000,
+          "disk_thin_provisioned": true
+        }
+      ],
+      
+      "communicator" : "ssh", 
+      "ssh_username": "root",
+      "ssh_password": "VMware1!VMware1!",
+      "ssh_timeout" : "10m", 
+
+      "iso_paths": ["{{ iso_file_path }}"],
+
+      "boot_command": [
+        "<enter>",
+        "<SHIFT+O>",
+        " ks={{ ks_path }}",
+        "<enter>" ,
+        ""
+      ]
+    }
+  ]
+}

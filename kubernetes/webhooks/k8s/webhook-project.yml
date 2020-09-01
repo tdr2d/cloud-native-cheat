@@ -1,0 +1,8 @@
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: webhook
+  labels:
+    customid: tail1
+    environment: t
+    iua: flg

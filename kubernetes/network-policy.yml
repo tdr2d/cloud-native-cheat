@@ -1,0 +1,50 @@
+---
+# If no policies exist in a namespace, then all ingress and egress traffic is allowed to and from pods in that namespace
+# Once a policy matches a pod, it will reject any connections that are not allowed by the NetworkPolicy
+# Policies are additive. The pod is restricted to what is allowed by the union of all policies matching it
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:      # isolate all pods role: db in the default namespace  if {}, match all namespace
+    matchLabels:
+      role: db
+  policyTypes:      # Apllies Ingress or Egress policy or both. If not set, Ingress will always be set and Egress will be set if egress rules exists
+  - Ingress
+  - Egress
+  ingress:          # whitelist incoming flows if not set, blocks all incoming
+  - from:           # if set - {} allows all incoming
+    - ipBlock:
+        cidr: 172.17.0.0/16
+        except:
+        - 172.17.1.0/24
+    - namespaceSelector:
+        matchLabels:
+          project: myproject
+    - podSelector:
+        matchLabels:
+          role: frontend
+    ports:
+    - protocol: TCP
+      port: 6379
+  egress:           # whitelist emiting flows, if not set blocks all emiting
+  - to:             # if set - {}, allows all emiting
+    - ipBlock:
+        cidr: 10.0.0.0/24
+    ports:
+    - protocol: TCP
+      port: 5978
+---       # Eg: Denies all ingress of namespace
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+---      # Eg: Allow all egress of namespace
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - {}

@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-env-pod
+  labels:
+    app: app-name
+spec:
+  serviceAccountName: default # mount token in /var/run/secrets/kubernetes.io/serviceaccount/token
+  #
+  ## POD SCHEDULING
+  priorityClassName: high-priority # refer to a PriorityClass object, default in k8s are system-cluster-critical < system-node-critical
+  nodeSelector:
+    node-role.kubernetes.io/master: ''
+  tolerations:
+    - effect: NoSchedule
+      key: node-role.kubernetes.io/master
+      operator: Exists
+  affinity:
+    podAntiAffinity:                              # rule to force one pod per node
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - app-name
+          topologyKey: kubernetes.io/hostname # spread among nodes
+  #
+  ## CONTAINERS
+  containers:
+  - name: mycontainer
+    image: nginx
+    imagePullPolicy: IfNotPresent # Kubelet skips pulling an image if it already exists
+    command:
+      - /bin/sh
+      - -c
+      - |
+        #!/bin/sh
+        set -euo pipefail
+        source /run/etcd/environment
+    volumeMounts:
+    - name: mysecret              # Secret volume mount
+      mountPath: "/etc/foo"
+    - name: config-volumne
+      mountPath: /etc/fluentd-config
+    env:
+      - name: API_URL             # inline env variable
+        value: "https://lb.ocplab.adlere.priv"
+      - name: SECRET_USERNAME
+        valueFrom:                # Secret env mount
+          secretKeyRef:
+            name: mysecret
+            key: username
+    ports:
+    - containerPort: 80
+      protocol: TCP
+    livenessProbe:           # livenessProbe, set startupProbe for low starting containers, kubelet kills the container and restarts it if failure
+      httpGet:
+        path: /healthz       # success if code between 200 and 399
+        port: 80
+        httpHeaders:
+        - name: Custom-Header
+          value: Awesome
+      initialDelaySeconds: 3  # Start probing after x seconds
+      failureThreshold: 1     # Tolerate one failure
+      periodSeconds: 3        # Probe every x seconds
+    readinessProbe:           # A pod with containers not ready does not receive traffic through Kubernetes Services
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
+      initialDelaySeconds: 5
+      periodSeconds: 5
+  #
+  ## STORAGE
+  volumes:
+  - name: foo                     # Secret volume
+    secret:
+      secretName: mysecret
+      items:
+      - key: username
+        path: my-group/my-username
+        mode: 511
+  - name: config-volume           # ConfigMap mount
+    configMap:
+      name: fluentd-config
+  - name: varlog                  # Volume emptyDir, can be shared between containers
+    emptyDir: {}
+  - name: host-root-volume  	    # Volume, share directory with the node host
+    hostPath:
+      path: /
+  - name: projected-volume
+    projected:
+      sources:
+      - configMap:
+        name: nsx-ncp-config
+        items:
+          - {key: ncp.ini, path: ncp.ini}
+      - secret:
+        name: lb-secret
+        items:
+        - {key: tls.crt, path: lb-cert/tls.crt}
+        - {key: tls.key, path: lb-cert/tls.key}
+  restartPolicy: Never
