@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-# usage: ./dnsmask-pool-ip.sh eth0 192.168.95.43 192.168.95.50 192.168.95.254 192.168.95.254,192.168.145.2
-#                              dev   start           end           gateway        dns1,dns2
+# usage: ./dnsmask-pool-ip.sh ens192 192.168.95.43 192.168.95.50 192.168.95.254 192.168.95.254,192.168.145.2
+#                              dev   start         end           gateway        dns1,dns2
 
 readonly INTERFACE="${1:-eth0}"
 readonly START="${2-192.168.95.43}"

@@ -1,7 +1,5 @@
 # Globals
-nested_env: nes-thomas
-install_dir: /opt/vnested.thomas
-
+nested_env: nes-c95
 
 # Host vcenter infos
 vsphere_vcenter: 192.168.145.10
@@ -23,6 +21,7 @@ iso_file_path: "[AdminShare] _OS/VMWare/VMware-VMvisor-Installer-6.7.0.update03-
 vm_template: "t-centos-7.adlere.priv"
 vm_template_password: "{{ lookup('env', 'VM_TEMPLATE_PASSWORD') }}"
 dhcp_ip: 192.168.95.150
+interface: ens192
 dhcp_pool_start: 192.168.95.151
 dhcp_pool_end: 192.168.95.170
 netmask_short: 24
