@@ -8,7 +8,7 @@ apt remove python3 -y
 add-apt-repository ppa:deadsnakes/ppa -y
 apt-get update -y
 
-rm -rf /usr/bin/python /usr/bin/python
+rm -rf /usr/bin/python*
 apt-get install python${PY_VERSION} python3-pip -y
 cp /usr/bin/python${PY_VERSION} /usr/bin/python
 

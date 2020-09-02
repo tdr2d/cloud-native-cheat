@@ -1,6 +1,7 @@
 # Globals
 nested_env: nes-c95
 
+
 # Host vcenter infos
 vsphere_vcenter: 192.168.145.10
 vsphere_datacenter: Adlere
@@ -12,9 +13,9 @@ vsphere_network: dVLAN_PROTO5_v95  # used for template, ESXis and vsca
 
 
 # ESXi template
-esxi_template: "esxi67-template"
-ks_path: nfs://192.168.95.110/public/vmware/ks.cfg
-iso_file_path: "[AdminShare] _OS/VMWare/VMware-VMvisor-Installer-6.7.0.update03-14320388.x86_64.iso" # from datastore
+esxi_template: "t-esxi7.adlere.priv"
+ks_path: http://192.168.95.110/vmware/ks.cfg
+iso_file_path: "[AdminShare] _OS/VMWare/VMware-VMvisor-Installer-7.0.0-15843807.x86_64.iso" # from datastore
 
 
 # DHCP - NFS
@@ -31,10 +32,11 @@ dns2: 192.168.145.2
 
 
 # VCSA
-vcsa_iso: "[AdminShare] _OS/VMWare/VMware-VMvisor-Installer-6.7.0.update03-14320388.x86_64.iso" # from datastore
-segment: 10.0.1.1
+vcsa_iso: "[AdminShare] _OS/VMWare/VMware-VCSA-all-7.0.0-15952498.iso" # from datastore
+
 
 # NSX-T
-nsxt_ova: ""
-
+nsxt_ova: "[AdminShare] _OS/VMWare/nsx-unified-appliance-3.0.0.0.0.15946739.ova"
+segment: 10.0.1.1
+edge_interface_address: 192.168.95.171
 
