@@ -1,7 +1,6 @@
 variable vsphere_user { type = string }
 variable vsphere_password { type = string }
 variable ssh_password { type = string }
-variable dir { type = string }
 
 provider "vsphere" {
   user           = var.vsphere_user
@@ -80,16 +79,10 @@ resource "vsphere_virtual_machine" "dhcp_vm" {
   }
 
   provisioner "file" {
-      source = "${var.dir}/sys/rhel/dnsmasq-pool-ip.sh"
-      destination = "/root/dnsmasq-pool-ip.sh"
+      source = "{{ ssh_public_key }}"
+      destination = "/root/.ssh/authorized_keys"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /root/dnsmasq-pool-ip.sh",
-      "/root/dnsmasq-pool-ip.sh {{ interface }} {{ dhcp_pool_start }} {{ dhcp_pool_end }} {{ gateway }} {{ dns1 }},{{ dns2 }}",
-    ]
-  }
 
   connection  {
     user           = "root"

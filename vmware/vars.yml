@@ -1,6 +1,6 @@
 # Globals
-nested_env: nes-c95
-
+nested_env: c95
+install_dir: /tmp/c95
 
 # Host vcenter infos
 vsphere_vcenter: 192.168.145.10
@@ -9,26 +9,38 @@ vsphere_cluster: Adlere-WORKER
 vsphere_datastore: vsanDatastore-WORKER
 vsphere_folder: vProto5
 vsphere_resource_pool: vProto/vProto5
-vsphere_network: dVLAN_PROTO5_v95  # used for template, ESXis and vsca
+vsphere_network: dVLAN_PROTO5_v95  # used for dhcp servers, ESXis, vsca and nsx
 
+ssh_public_key: "~/.ssh/id_rsa.pub"
 
-# ESXi template
-esxi_template: "t-esxi7.adlere.priv"
-ks_path: http://192.168.95.110/vmware/ks.cfg
-iso_file_path: "[AdminShare] _OS/VMWare/VMware-VMvisor-Installer-7.0.0-15843807.x86_64.iso" # from datastore
-
-
-# DHCP - NFS
+# DNSMASQ - NFS
 vm_template: "t-centos-7.adlere.priv"
 vm_template_password: "{{ lookup('env', 'VM_TEMPLATE_PASSWORD') }}"
 dhcp_ip: 192.168.95.150
-interface: ens192
-dhcp_pool_start: 192.168.95.151
-dhcp_pool_end: 192.168.95.170
+
+dnsmasq_dhcp_hosts:
+  - name: c95-esxi7-1
+    mac: 00:50:56:a5:80:51
+    ip: 192.168.95.151
+  - name: c95-esxi7-2
+    mac: 00:50:56:a5:80:52
+    ip: 192.168.95.152
+  - name: c95-esxi7-3
+    mac: 00:50:56:a5:80:53
+    ip: 192.168.95.153
+  - name: c95-esxi7-4
+    mac: 00:50:56:a5:80:54
+    ip: 192.168.95.154
+
 netmask_short: 24
+netmask_long: 255.255.255.0
 gateway: 192.168.95.254
 dns1: 192.168.95.254
 dns2: 192.168.145.2
+
+
+# ESXi template
+esxi_template: "t_nested_esxi70_v1"
 
 
 # VCSA

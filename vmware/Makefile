@@ -5,12 +5,13 @@ VARYML?=vars.yml
 help: 
 	@fgrep -h "##" Makefile | fgrep -v "fgrep" | sed -r 's/(.*)(:)(.*)(##)(.*)/\1:\5/' - | column -s: -t | sed -e 's/##//'
 
+checks:
+	ansible-playbook checks.yml -e @$(VARYML)
 
-template: 	## 00 Create the 	ESXi Template (Optional)
-	ansible localhost -o -m template -a "src=esxi/packer_template.json dest=/tmp" -e @$(VARYML)
-	packer build /tmp/packer_template.json
+manager: checks ## 01 Create and configure a DHCP server
+	ansible-playbook manager/manager.yml -e @$(VARYML)
 
-dhcp: 		## 01 Create and configure a DHCP server
+dhcp2: 	
 	ansible localhost -o -m template -a "src=dhcp/main.tf dest=/tmp/tf/" -e @$(VARYML)
 	. ./env.sh && cd /tmp/tf && terraform init && terraform plan && terraform apply -auto-approve
 

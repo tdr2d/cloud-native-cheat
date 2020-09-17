@@ -22,6 +22,15 @@ failed_when: "nitro_ret.http_response_data.status >= 400 and nitro_ret.http_resp
 # Dynamic var lookup
 var1: "{{ lookup('vars', item.machine_type + '64').stdout  }}"
 
+# check environment variables
+- name: Check environment variables
+  fail:
+    msg: "Environment {{ item }} is not defined"
+  when: "lookup('env', item) == ''"
+  loop:
+    - VSPHERE_USER
+    - VSPHERE_PASSWORD
+
 # Json filter by key/value
   vars:
     my_yaml: 

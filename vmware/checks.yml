@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Check environment variables
+      fail:
+        msg: "Environment {{ item }} is not defined"
+      when: "lookup('env', item) == ''"
+      loop:
+        - VSPHERE_USER
+        - VSPHERE_PASSWORD
+        - VM_TEMPLATE_PASSWORD
+        - TF_VAR_vsphere_user
+        - TF_VAR_vsphere_password
+        - TF_VAR_ssh_password
+    
+    - name: Check install_dir
+      file:
+        path: "{{ install_dir }}"
+        state: directory

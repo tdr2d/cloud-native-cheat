@@ -1,0 +1,21 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Manager | Compile main.tf
+      template: src=main.tf dest={{ install_dir }}
+
+    - name: "Manager | Run tf | tail -f tf_manager.log"
+      shell: terraform init && terraform plan && terraform apply -auto-approve > tf_manager.log
+      args: chdir="{{ install_dir }}"
+
+    - name: Manager | Tf Check status
+      shell: cat /tmp/vm-template.log
+      args: chdir="{{ install_dir }}"
+      register: tf_status
+    - debug: var=tf_status.stdout
+
+# ---
+# - hosts: "{{ dhcp_ip }}"
+#   roles:
+#     - bertvv.dnsmasq
