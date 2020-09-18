@@ -1,0 +1,13 @@
+[manager]
+{{ manager_ip }}
+
+[esxis]
+{% for x  in dnsmasq_dhcp_hosts %}
+{{ x.ip }}
+{% endfor %}
+
+[vcsa]
+{{ vcsa_ip }}
+
+[nsxt]
+{{ nsxt_ip }}

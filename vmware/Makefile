@@ -9,7 +9,7 @@ checks:
 	ansible-playbook checks.yml -e @$(VARYML)
 
 manager: checks ## 01 Create and configure a DHCP server
-	ansible-playbook manager/manager.yml -e @$(VARYML)
+	ansible-playbook -i hosts manager/manager.yml -e @$(VARYML)
 
 dhcp2: 	
 	ansible localhost -o -m template -a "src=dhcp/main.tf dest=/tmp/tf/" -e @$(VARYML)

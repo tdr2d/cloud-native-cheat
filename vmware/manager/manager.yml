@@ -1,5 +1,5 @@
 ---
-- hosts: localhost
+- hosts: manager
   gather_facts: no
   tasks:
     - name: Manager | Provision vm
@@ -13,9 +13,10 @@
         resource_pool: "{{ vsphere_resource_pool.split('/')[-1] }}"
         name: "{{ nested_env }}-manager"
         state: poweredon
+        template: "{{ manager_template }}"
         guest_id: centos64Guest
         disk:
-        - size_gb: 2000
+        - size_gb: 1000
           type: thin
           datastore: "{{ vsphere_datastore }}"
         hardware:
@@ -25,17 +26,13 @@
         networks:
         - name: "{{ vsphere_network }}"
           ip: "{{ manager_ip }}"
-          netmask: 255.255.255.0
-          device_type: vmxnet3
-        wait_for_ip_address: yes
-      register: deploy_vm
+          netmask: "{{ netmask_long }}"
+          gateway: "{{ gateway }}"
+      delegate_to: localhost
 
     - name: Manager | Wait 600 seconds for target vm to become reachable/usable
       wait_for_connection:
-
-
-- hosts: "manager"
-  remote_user: root
-  tasks:
+    - setup:
+    
     - include_role: name=bertvv.dnsmasq
     - include_role: name=geerlingguy.nfs

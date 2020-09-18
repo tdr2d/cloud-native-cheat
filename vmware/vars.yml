@@ -55,10 +55,11 @@ esxi_template: "t_nested_esxi70_v1"
 
 # VCSA
 vcsa_iso: "[AdminShare] _OS/VMWare/VMware-VCSA-all-7.0.0-15952498.iso" # from datastore
-
+vcsa_ip: 192.168.95.155
 
 # NSX-T
 nsxt_ova: "[AdminShare] _OS/VMWare/nsx-unified-appliance-3.0.0.0.0.15946739.ova"
+nsxt_ip: 192.168.95.156
 segment: 10.0.1.1
 edge_interface_address: 192.168.95.171
 
