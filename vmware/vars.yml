@@ -2,8 +2,11 @@
 nested_env: c95
 install_dir: /tmp/c95
 
+
 # Host vcenter infos
 vsphere_vcenter: 192.168.145.10
+vsphere_user: "{{ lookup('env', 'VSPHERE_USER') }}"
+vsphere_password: "{{ lookup('env', 'VSPHERE_PASSWORD') }}"
 vsphere_datacenter: Adlere
 vsphere_cluster: Adlere-WORKER
 vsphere_datastore: vsanDatastore-WORKER
@@ -13,10 +16,18 @@ vsphere_network: dVLAN_PROTO5_v95  # used for dhcp servers, ESXis, vsca and nsx
 
 ssh_public_key: "~/.ssh/id_rsa.pub"
 
+netmask_short: 24
+netmask_long: 255.255.255.0
+gateway: 192.168.95.254
+dns1: 192.168.95.254
+dns2: 192.168.145.2
+
+
 # DNSMASQ - NFS
-vm_template: "t-centos-7.adlere.priv"
-vm_template_password: "{{ lookup('env', 'VM_TEMPLATE_PASSWORD') }}"
-dhcp_ip: 192.168.95.150
+manager_template: "t-centos-7.adlere.priv"
+manager_guest_id: centos64Guest
+manager_root_password: "{{ lookup('env', 'MANAGER_ROOT_PASSWORD') }}"
+manager_ip: 192.168.95.150
 
 dnsmasq_dhcp_hosts:
   - name: c95-esxi7-1
@@ -32,11 +43,10 @@ dnsmasq_dhcp_hosts:
     mac: 00:50:56:a5:80:54
     ip: 192.168.95.154
 
-netmask_short: 24
-netmask_long: 255.255.255.0
-gateway: 192.168.95.254
-dns1: 192.168.95.254
-dns2: 192.168.145.2
+nfs_rpcbind_state: started
+nfs_rpcbind_enabled: true
+nfs_exports:
+  - "/public *(rw,sync,no_root_squash)"
 
 
 # ESXi template

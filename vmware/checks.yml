@@ -9,10 +9,9 @@
       loop:
         - VSPHERE_USER
         - VSPHERE_PASSWORD
-        - VM_TEMPLATE_PASSWORD
+        - TEMPLATE_ROOT_PASSWORD
         - TF_VAR_vsphere_user
         - TF_VAR_vsphere_password
-        - TF_VAR_ssh_password
     
     - name: Check install_dir
       file:

@@ -2,20 +2,40 @@
 - hosts: localhost
   gather_facts: no
   tasks:
-    - name: Manager | Compile main.tf
-      template: src=main.tf dest={{ install_dir }}
+    - name: Manager | Provision vm
+      vmware_guest:
+        hostname: "{{ vsphere_vcenter }}"
+        username: "{{ vsphere_user }}"
+        password: "{{ vsphere_password }}"
+        datacenter: "{{ vsphere_datacenter }}"
+        validate_certs: no
+        folder: "{{ vsphere_folder }}"
+        resource_pool: "{{ vsphere_resource_pool.split('/')[-1] }}"
+        name: "{{ nested_env }}-manager"
+        state: poweredon
+        guest_id: centos64Guest
+        disk:
+        - size_gb: 2000
+          type: thin
+          datastore: "{{ vsphere_datastore }}"
+        hardware:
+          memory_mb: 4096
+          num_cpus: 2
+          scsi: paravirtual
+        networks:
+        - name: "{{ vsphere_network }}"
+          ip: "{{ manager_ip }}"
+          netmask: 255.255.255.0
+          device_type: vmxnet3
+        wait_for_ip_address: yes
+      register: deploy_vm
 
-    - name: "Manager | Run tf | tail -f tf_manager.log"
-      shell: terraform init && terraform plan && terraform apply -auto-approve > tf_manager.log
-      args: chdir="{{ install_dir }}"
+    - name: Manager | Wait 600 seconds for target vm to become reachable/usable
+      wait_for_connection:
 
-    - name: Manager | Tf Check status
-      shell: cat /tmp/vm-template.log
-      args: chdir="{{ install_dir }}"
-      register: tf_status
-    - debug: var=tf_status.stdout
 
-# ---
-# - hosts: "{{ dhcp_ip }}"
-#   roles:
-#     - bertvv.dnsmasq
+- hosts: "manager"
+  remote_user: root
+  tasks:
+    - include_role: name=bertvv.dnsmasq
+    - include_role: name=geerlingguy.nfs

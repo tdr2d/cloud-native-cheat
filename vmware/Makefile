@@ -21,4 +21,4 @@ esxis:  	## 02 Create ESXis
 
 ##
 clean:		## zz Clean temp directories
-	rm -rf /tmp/tf
+	rm -rf /tmp/c95
