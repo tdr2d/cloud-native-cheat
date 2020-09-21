@@ -11,7 +11,6 @@ checks:
 
 install: ## Install locally needed roles
 	sudo pip install pyvmomy
-	ansible-galaxy install bertvv.dnsmasq
 	ansible-galaxy install geerlingguy.nfs
 
 manager: checks ## 01 Create and configure a DHCP server

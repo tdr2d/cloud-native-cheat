@@ -2,20 +2,6 @@
 - hosts: localhost
   gather_facts: no
   tasks:
-    # - name: Manager | Compile main.tf
-    #   template: src=main.tf dest={{ install_dir }}
-
-    # - name: "Manager | Run tf | tail -f {{ install_dir }}/tf_manager.log"
-    #   shell: terraform init && terraform plan > tf_manager.log && terraform apply -auto-approve >> tf_manager.log
-    #   args:
-    #     chdir: "{{ install_dir }}"
-
-    # - name: Manager | Tf Check status
-    #   shell: cat /tmp/vm-template.log
-    #   args: 
-    #     chdir: "{{ install_dir }}"
-    #   register: tf_status
-    # - debug: var=tf_status.stdout
     - name: ESXI | Clone template
       vmware_guest:
         hostname: "{{ vsphere_vcenter }}"
@@ -45,10 +31,19 @@
           num_cpu_cores_per_socket: 4
         networks:
         - name: "{{ vsphere_network }}"
-          mac: "{{ item.mac | lower }}"
-          device_type: vmxnet3
         - name: "{{ vsphere_network }}"
-      loop: "{{ dnsmasq_dhcp_hosts }}"
-      async: 180
-      poll: 10
+        vapp_properties:
+          - {"id": "guestinfo.hostname",    "value": "{{ item.name }}"}
+          - {"id": "guestinfo.ipaddress",   "value": "{{ item.ip }}"}
+          - {"id": "guestinfo.netmask",     "value": "{{ netmask_long }}"}
+          - {"id": "guestinfo.gateway",     "value": "{{ gateway }}"}
+          - {"id": "guestinfo.vlan",        "value": "4095"}
+          - {"id": "guestinfo.dns",         "value": "{{ dns1 }} {{ dns2 }}"}
+          - {"id": "guestinfo.domain",      "value": "{{ item.name }}.{{ nested_env }}.{{ dnsearch }}"}
+          - {"id": "guestinfo.ntp",         "value": "{{ ntp }}"}
+          - {"id": "guestinfo.syslog",      "value": "192.168.1.200"}
+          - {"id": "guestinfo.password",    "value": "VMware1!"}
+          - {"id": "guestinfo.ssh",         "value": "True"}
+          - {"id": "guestinfo.createvmfs",  "value": "False"}
+      loop: "{{ esxi_hosts }}"
       delegate_to: localhost

@@ -3,24 +3,11 @@ ddns-update-style interim;
 default-lease-time 14400;
 max-lease-time 14400;
 
-{% set prefix_addr = gateway.split('.')[0] + '.' + gateway.split('.')[1] + '.' + gateway.split('.')[2] %}
-subnet {{ prefix_addr }}.0 netmask 255.255.255.0 {
+subnet {{ manager_ip.split('.')[0] + '.' + manager_ip.split('.')[1] + '.' + manager_ip.split('.')[2] }}.0 netmask {{ netmask_long }} {
         option routers                  {{ gateway }};
         option subnet-mask              {{ netmask_long }};
         option domain-search            "{{ dnsearch }}";
         option domain-name-servers      {{ dns1 }},{{ dns2 }};
         option time-offset              -18000;     # Eastern Standard Time
-        range {{ prefix_addr }}.100 {{ prefix_addr }}.200;
-
-    {% for i in dnsmasq_dhcp_hosts %}
-    host {{ i.name }} {
-          option host-name "{{ i.name }}.{{ nested_env }}.{{ dnsearch }}";
-          hardware ethernet {{ i.mac }} ;
-          fixed-address {{ i.ip }} ;
-        }
-    {% endfor %}
-
- 		# this is PXE specific  
-		#filename "pxelinux.0";  
-		#next-server {{ manager_ip }};
+        range {{ ip_range[0] }} {{ ip_range[1] }};
 }

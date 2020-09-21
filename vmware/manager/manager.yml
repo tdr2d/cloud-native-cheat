@@ -2,47 +2,49 @@
 - hosts: manager
   gather_facts: no
   tasks:
-    # - name: "Manager | Provision vm {{ nested_env }}-manager"
-    #   vmware_guest:
-    #     hostname: "{{ vsphere_vcenter }}"
-    #     username: "{{ vsphere_user }}"
-    #     password: "{{ vsphere_password }}"
-    #     datacenter: "{{ vsphere_datacenter }}"
-    #     validate_certs: no
-    #     folder: "{{ vsphere_folder }}"
-    #     resource_pool: "{{ vsphere_resource_pool.split('/')[-1] }}"
-    #     name: "{{ nested_env }}-manager"
-    #     state: poweredon
-    #     template: "{{ manager_template }}"
-    #     guest_id: centos64Guest
-    #     disk:
-    #     - size_gb: 1000
-    #       type: thin
-    #       datastore: "{{ vsphere_datastore }}"
-    #     hardware:
-    #       memory_mb: 4096
-    #       num_cpus: 2
-    #       scsi: paravirtual
-    #     networks:
-    #     - name: "{{ vsphere_network }}"
-    #       ip: "{{ manager_ip }}"
-    #       netmask: "{{ netmask_long }}"
-    #       gateway: "{{ gateway }}"
-    #     customization:
-    #       dns_servers:
-    #         - "{{ dns1 }}"
-    #         - "{{ dns2 }}"
-    #   delegate_to: localhost
+    - name: "Manager | Provision vm {{ nested_env }}-manager"
+      vmware_guest:
+        hostname: "{{ vsphere_vcenter }}"
+        username: "{{ vsphere_user }}"
+        password: "{{ vsphere_password }}"
+        datacenter: "{{ vsphere_datacenter }}"
+        validate_certs: no
+        folder: "{{ vsphere_folder }}"
+        resource_pool: "{{ vsphere_resource_pool.split('/')[-1] }}"
+        name: "{{ nested_env }}-manager"
+        state: poweredon
+        template: "{{ manager_template }}"
+        guest_id: centos64Guest
+        disk:
+        - size_gb: 1000
+          type: thin
+          datastore: "{{ vsphere_datastore }}"
+        hardware:
+          memory_mb: 4096
+          num_cpus: 2
+          scsi: paravirtual
+        networks:
+        - name: "{{ vsphere_network }}"
+          ip: "{{ manager_ip }}"
+          netmask: "{{ netmask_long }}"
+          gateway: "{{ gateway }}"
+        customization:
+          dns_servers:
+            - "{{ dns1 }}"
+            - "{{ dns2 }}"
+      delegate_to: localhost
+      register: vm_provision
 
-    # - name: "Manager | Wait 600 seconds for vm {{ nested_env }}-manager to become reachable"
-    #   wait_for_connection:
-    #     timeout: 180
-    #     delay: 30
-    # - setup:
+    - name: "Manager | Wait 600 seconds for vm {{ nested_env }}-manager to become reachable"
+      wait_for_connection:
+        timeout: 180
+        delay: 30
+      when: "vm_provision.changed"
     
-    # - include_role: name=bertvv.dnsmasq
-    # - include_role: name=geerlingguy.nfs
-    
+    - setup:
+
+    - include_role: name=geerlingguy.nfs
+
     - include_tasks: dhcp.yml
 
     - name: "Manager | Open ports"

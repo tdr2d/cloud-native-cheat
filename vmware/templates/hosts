@@ -2,7 +2,7 @@
 {{ manager_ip }} ansible_user=root
 
 [esxis]
-{% for x  in dnsmasq_dhcp_hosts %}
+{% for x  in esxi_hosts %}
 {{ x.ip }}  ansible_user=root
 {% endfor %}
 
