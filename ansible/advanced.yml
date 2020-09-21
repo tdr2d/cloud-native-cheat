@@ -54,3 +54,11 @@ tasks:
 
 # Json max of key
 set_fact: maximum={{ my_json | json_query('[*].index ) | max }} # => 2
+
+
+# Wait for VM and gather facts
+- wait_for_connection:
+    timeout: 180
+    delay: 30
+  when: "vm_provision.changed"
+- setup: # gather_facts

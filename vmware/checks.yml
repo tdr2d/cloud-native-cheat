@@ -20,5 +20,5 @@
     
     - name: Check hosts
       template:
-        src: templates/hosts
+        src: hosts.j2
         dest: "hosts"

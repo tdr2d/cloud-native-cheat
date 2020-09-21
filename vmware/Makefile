@@ -15,10 +15,10 @@ install: ## Install locally needed roles
 
 manager: checks ## 01 Create and configure a DHCP server
 	ansible-playbook -i hosts manager/manager.yml -e @$(VARYML)
-esxi: checks 	## 02 Create ESXis
+esxi: checks 	## 02 Create nested ESXis
 	ansible-playbook -i hosts esxi/esxi.yml -e @$(VARYML)
-vsca: check
-	ansible-playbook -i hosts esxi/esxi.yml -e @$(VARYML)
+vcsa: check 	## 02 Create nested VCSA
+	ansible-playbook -i hosts vcsa/vcsa.yml -e @$(VARYML)
 
 ##
 clean:		## zz Clean temp directories
