@@ -2,17 +2,53 @@
 - hosts: localhost
   gather_facts: no
   tasks:
-    - name: Manager | Compile main.tf
-      template: src=main.tf dest={{ install_dir }}
+    # - name: Manager | Compile main.tf
+    #   template: src=main.tf dest={{ install_dir }}
 
-    - name: "Manager | Run tf | tail -f {{ install_dir }}/tf_manager.log"
-      shell: terraform init && terraform plan > tf_manager.log && terraform apply -auto-approve >> tf_manager.log
-      args:
-        chdir: "{{ install_dir }}"
+    # - name: "Manager | Run tf | tail -f {{ install_dir }}/tf_manager.log"
+    #   shell: terraform init && terraform plan > tf_manager.log && terraform apply -auto-approve >> tf_manager.log
+    #   args:
+    #     chdir: "{{ install_dir }}"
 
-    - name: Manager | Tf Check status
-      shell: cat /tmp/vm-template.log
-      args: 
-        chdir: "{{ install_dir }}"
-      register: tf_status
-    - debug: var=tf_status.stdout
+    # - name: Manager | Tf Check status
+    #   shell: cat /tmp/vm-template.log
+    #   args: 
+    #     chdir: "{{ install_dir }}"
+    #   register: tf_status
+    # - debug: var=tf_status.stdout
+    - name: ESXI | Clone template
+      vmware_guest:
+        hostname: "{{ vsphere_vcenter }}"
+        username: "{{ vsphere_user }}"
+        password: "{{ vsphere_password }}"
+        datacenter: "{{ vsphere_datacenter }}"
+        validate_certs: no
+        folder: "{{ vsphere_folder }}"
+        resource_pool: "{{ vsphere_resource_pool.split('/')[-1] }}"
+        name: "{{ item.name }}"
+        state: poweredon
+        template: "{{ esxi_template }}"
+        disk:
+        - size_gb: 4
+          type: thin
+          datastore: "{{ vsphere_datastore }}"
+        - size_gb: 4
+          type: thin
+          datastore: "{{ vsphere_datastore }}"
+        - size_gb: 8
+          type: thin
+          datastore: "{{ vsphere_datastore }}"
+        hardware:
+          memory_mb: 32768
+          num_cpus: 4
+          scsi: paravirtual
+          num_cpu_cores_per_socket: 4
+        networks:
+        - name: "{{ vsphere_network }}"
+          mac: "{{ item.mac | lower }}"
+          device_type: vmxnet3
+        - name: "{{ vsphere_network }}"
+      loop: "{{ dnsmasq_dhcp_hosts }}"
+      async: 180
+      poll: 10
+      delegate_to: localhost

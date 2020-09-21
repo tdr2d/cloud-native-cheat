@@ -21,14 +21,16 @@ netmask_long: 255.255.255.0
 gateway: 192.168.95.254
 dns1: 192.168.95.254
 dns2: 192.168.145.2
+dnsearch: adlere.priv
 
 
-# DNSMASQ - NFS
+# DHCPD - NFS
 manager_template: "t-centos-7.adlere.priv"
 manager_guest_id: centos64Guest
 manager_root_password: "{{ lookup('env', 'MANAGER_ROOT_PASSWORD') }}"
 manager_ip: 192.168.95.150
 
+dnsmasq_authoritative: true
 dnsmasq_dhcp_hosts:
   - name: c95-esxi7-1
     mac: 00:50:56:a5:80:51
@@ -36,12 +38,12 @@ dnsmasq_dhcp_hosts:
   - name: c95-esxi7-2
     mac: 00:50:56:a5:80:52
     ip: 192.168.95.152
-  - name: c95-esxi7-3
-    mac: 00:50:56:a5:80:53
-    ip: 192.168.95.153
-  - name: c95-esxi7-4
-    mac: 00:50:56:a5:80:54
-    ip: 192.168.95.154
+  # - name: c95-esxi7-3
+  #   mac: 00:50:56:a5:80:53
+  #   ip: 192.168.95.153
+  # - name: c95-esxi7-4
+  #   mac: 00:50:56:a5:80:54
+  #   ip: 192.168.95.154
 
 nfs_rpcbind_state: started
 nfs_rpcbind_enabled: true

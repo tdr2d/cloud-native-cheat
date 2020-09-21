@@ -1,13 +1,13 @@
 [manager]
-{{ manager_ip }}
+{{ manager_ip }} ansible_user=root
 
 [esxis]
 {% for x  in dnsmasq_dhcp_hosts %}
-{{ x.ip }}
+{{ x.ip }}  ansible_user=root
 {% endfor %}
 
 [vcsa]
-{{ vcsa_ip }}
+{{ vcsa_ip }}  ansible_user=root
 
 [nsxt]
-{{ nsxt_ip }}
+{{ nsxt_ip }}  ansible_user=root
