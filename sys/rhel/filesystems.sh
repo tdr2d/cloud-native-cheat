@@ -12,19 +12,16 @@ echo "- - -" > /sys/class/scsi_host/host0/scan  # then if your host device is ca
 fdisk -l # check the new disk size
 
 
-## 2. Create new partition on disk
-cat << EOF > /tmp/answer
-n
-p
-3
+## Resize existing partition
+printf "d\n2\nn\np\n2\nw\n" > /tmp/delete_part_sda2 && fdisk /dev/sda < /tmp/delete_part_sda2 # delete /dev/sda2 partition
+partprobe # While on-disk partition table has been updated, observe that on-memory kernel partition table has not
+partx -u /dev/vda # Execute partx (provided by util-linux package to update the in-memory kernel partition table from the on-disk partition table
+cat /proc/partitions | grep sd # Verify that in-memory kernel partition table has been updated with the new size:
+pvresize /dev/sda2 # Update pvs and lv
 
 
-t
-3
-8e
-w
-EOF
-fdisk /dev/sda < /tmp/answer         # Create new primary partition /dev/sda3 of type Linux LVM (8e) on /dev/sda
+## Create new partition on disk
+printf "n\np\n3\n\n\nt\n3\n8e\nw\n"  > /tmp/answer && fdisk /dev/sda < /tmp/answer # Create new primary partition /dev/sda3 of type Linux LVM (8e) on /dev/sda
 partprobe -s || partx -v -a /dev/sda # scan the newly added partition
 fdisk -l # check the new partition
 
