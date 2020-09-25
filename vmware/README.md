@@ -5,23 +5,22 @@
 - terraform
 - ansible
 - linux environment
+- centos template vm
+- esxi template vm (see esxi/prepare.sh)
+- vcsa template vm (see vcsa/prepare.sh)
+- nsx template vm
 ```
 export VSPHERE_USER="admin"
 export VSPHERE_PASSWORD="VMware1!VMware1!"
 export VM_TEMPLATE_PASSWORD='kernet'
 ```
 
-## 00 - Esxi Template (Optional)
+## 01 - Manager
 ```
-make template
-```
-
-## 01 - Dhcp
-```
-make dhcp
+make manager
 ```
 
-## 02 - ESXis
+## 02 - Esxi
 ```
 make esxi
 ```

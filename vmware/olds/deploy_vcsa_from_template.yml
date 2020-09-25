@@ -1,0 +1,62 @@
+    - name: VCSA | Get parent vcsa's thumbprint
+      shell: |
+        openssl s_client -connect 192.168.145.10:443 < /dev/null 2>/dev/null | \
+        openssl x509 -fingerprint -noout -in /dev/stdin | cut -d= -f 2 | \
+        awk '{print tolower($0)}' | sed 's/://g'
+      register: thumbprint
+
+    - name: VCSA | Provision vm from template
+      vmware_guest:
+        hostname: "{{ vsphere_vcenter }}"
+        username: "{{ vsphere_user }}"
+        password: "{{ vsphere_password }}"
+        datacenter: "{{ vsphere_datacenter }}"
+        validate_certs: no
+        folder: "{{ vsphere_folder }}"
+        resource_pool: "{{ vsphere_resource_pool.split('/')[-1] }}"
+        name: "{{ nested_env }}-vcenter"
+        state: poweredon
+        template: "{{ vcsa_template }}"
+        # disk:
+        #   - { "size_gb": 48, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 4.14, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 25, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 50, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 10, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 10, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 15, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 25, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 1, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 10, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 10, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 100, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 50, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 25, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 15, type: thin, datastore: "{{ vsphere_datastore }}" }
+        #   - { "size_gb": 100, type: thin, datastore: "{{ vsphere_datastore }}" }
+        # hardware:
+        #   memory_mb: 19
+        #   num_cpus: 4
+        #   scsi: paravirtual
+        networks:
+        - name: "{{ vsphere_network }}"
+        vapp_properties:
+        - { "id": "guestinfo.cis.appliance.net.addr.family",          "value": "ipv4" } # Network IP address family (i.e., 'ipv4' or 'ipv6').
+        - { "id": "guestinfo.cis.appliance.net.mode", 								"value": "static" } # Network mode (i.e., 'static', 'dhcp', or 'autoconf' (IPv6 only).
+        - { "id": "guestinfo.cis.appliance.net.addr", 								"value": "{{ vcsa_ip }}" } # Network IP address.  Only provide this when mode is 'static'.  Can be IPv4 or IPv6 based on specified address family.
+        - { "id": "guestinfo.cis.appliance.net.prefix",              	"value": "24" } # Network prefix length.  Only provide this when mode is 'static'.  0-32 for IPv4.  0-128 for IPv6.
+        - { "id": "guestinfo.cis.appliance.net.gateway",		          "value": "{{ gateway }}" } # IP address of default gateway.  Can be 'default' when using IPv6.
+        - { "id": "guestinfo.cis.appliance.net.dns.servers", 					"value": "{{ vcsa_ip }}" } # Comma separated list of IP addresses of DNS servers.
+        - { "id": "guestinfo.cis.appliance.net.pnid", 								"value": "vcenter.{{ nested_env }}.{{ dnsearch }}" } # Network identity (IP address or fully-qualified domain name) services should use when advertising themselves.
+        - { "id": "guestinfo.cis.vmdir.password", 									  "value": "VMware1!VMware1!" } # For the first instance of the identity domain, this is the password given to the Administrator account.  Otherwise, this is the password of the Administrator account of the replication partner.
+        - { "id": "guestinfo.cis.appliance.root.passwd", 							"value": "VMware1!VMware1!" } # Password to assign to root account.  If blank, password can be set on the console.
+        - { "id": "guestinfo.cis.vpxd.ha.management.addr", 						"value": "{{ vsphere_vcenter }}" } # FQDN or IP address of the vCenter Server managing that target appliance. Used when upgrading a source appliance in VCHA cluster.
+        - { "id": "guestinfo.cis.vpxd.ha.management.port", 						"value": "443" } # Https port of the vCenter Server managing that target appliance. Used when upgrading a source appliance in VCHA cluster. If not specified, port 443 will be used by default.
+        - { "id": "guestinfo.cis.vpxd.ha.management.user", 						"value": "{{ vsphere_user }}" } # User able to authenticate in vCenter Server managing that target appliance. The user must have the privilege Global.VCServer. Used when upgrading a source appliance in VCHA cluster.
+        - { "id": "guestinfo.cis.vpxd.ha.management.password", 				"value": "{{ vsphere_password }}" } # Password for administrator user authenticating to the vCenter Server managing target appliance. Used when upgrading a source appliance in VCHA cluster.
+        - { "id": "guestinfo.cis.vpxd.ha.management.thumbprint", 			"value": "{{ thumbprint.stdout }}" } # Thumbprint for the SSL certificate of the host that manages the appliance to upgrade. Used when upgrading a source appliance in VCHA cluster.
+        - { "id": "guestinfo.cis.vpxd.ha.placement", 									"value": "{{ vsphere_resource_pool }}" } # Path to host/cluster/resource pool where target appliance will be deployed on management vCenter Server. Used when upgrading a source appliance in VCHA cluster. Example: /my_datacenter/my_folder/my_host_or_cluster/my_resource_pool
+        - { "id": "guestinfo.cis.ceip_enabled", 									    "value": "True" } # VMware’s Customer Experience Improvement Program ("CEIP") provides VMware with information that enables VMware to improve its products and services, to fix problems, and to advise you on how best to deploy and use our products. As part of the CEIP, VMware collects technical information about your organization’s use of VMware products and services on a regular basis in association with your organization’s VMware license id(s). This information does not personally identify any individual. For more details about the Program and how VMware uses the information it collects through CEIP, please see the product documentation at http://www.vmware.com/info?id=1399. If you want to participate in VMware’s CEIP for this product, set this property to True. You may join or leave VMware’s CEIP for this product at any time.
+        - { "id": "vami.domain.VMware-vCenter-Server-Appliance", 			"value": "vcenter.{{ nested_env }}.{{ dnsearch }}" } # The domain name of this VM. Leave blank if DHCP is desired.
+        - { "id": "vami.searchpath.VMware-vCenter-Server-Appliance", 	"value": "{{ dnsearch }}"} # The domain search path (comma or space separated domain names) for this VM. Leave blank if DHCP is desired.
+      delegate_to: localhost

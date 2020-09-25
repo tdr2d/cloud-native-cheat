@@ -1,0 +1,238 @@
+===========================================================================================================================================================================
+List of the JSON parameters that you can use to prepare templates for deployment of embedded and external instances of the VCSA {'version': '7.0'}.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    __version:
+        Set this field to "2.13.0".
+    =======================================================================================================================================================================
+    new_vcsa:
+        This section describes the appliance that you want to deploy.
+    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        ===================================================================================================================================================================
+        vc:
+            This subsection describes the vCenter Server instance on which to deploy the appliance. Required if you are deploying the appliance on an ESXi host or DRS
+            cluster from a vCenter Server inventory. Fill in either this subsection or the 'esxi' subsection.
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            hostname:
+                The IP address or fully qualified domain name (FQDN) of the vCenter Server instance. If an FQDN is provided, it has to be resolvable from the machine that
+                is running the installer.
+                Type: string
+            username:
+                The user name of a user with administrative privileges or the Single Sign-On administrator on vCenter.
+                Type: string
+            password:
+                The password of a user with administrative privileges or the Single Sign-On administrator on vCenter. If left blank, or omitted, you will be prompted to
+                enter it at the command console during template verification.
+                Type: string
+            deployment_network:
+                The network of the ESXi host to which to connect the new appliance. When the ESXi host has one network, you can omit this parameter.
+                Type: string
+            datacenter:
+                The path to the datacenter. This path must end with the datacenter's name. If the datacenter has any parent folders, the parent folder names must also be
+                in the path. Parent folders are optional. All names are case-sensitive. Example: "datacenter": ["Parent Folder 1", "Parent Folder 2", "My Datacenter"].
+                Type: string, array
+            datastore:
+                The datastore on which to store the files of the appliance. This value has to be either a specific datastore name, or a specific datastore in a datastore
+                cluster. The datastore must be accessible from the vCenter Server data center and must have at least 25 GB of free space. Otherwise, the new appliance
+                might not power on.
+                Type: string
+            port:
+                The port number of the vCenter Server instance. The default value is 443.
+                Type: integer
+            ssl_certificate_verification:
+                Supply the SHA-1 thumbprint (fingerprint) of the server's security certificate in the "thumbprint" key, e.g. "thumbprint":
+                "CA:FE:18:99:11:22:33:44:55:A2:29:FC:59:47:7C:AB:CD:AB:AA:99", or add the key-value pair "verification_mode": "NONE" to skip certificate verification for
+                this server. Note that your server's thumbprint will be different from the example. The only value acceptable for "verification_mode" is "NONE"
+                (case-sensitive), and "thumbprint" and "verification_mode" are mutually exclusive.
+                Type: dictionary
+            target:
+                The path to a specific cluster, ESXi host, or resource pool under the datacenter specified in the template key "datacenter" above. This is where you want
+                to deploy the appliance. This path must end with a cluster name, a ESXi hostname, or a resource pool name. Parent folders are optional. All names are
+                case-sensitive. Examples: For the hierachy 'Parent Folder 1\Parent Folder 2\My ESXi', you must specify "target": ["Parent Folder 1", "Parent Folder 2", "My
+                ESXi"]. For the hierarchy 'Parent Folder 1\Parent Folder 2\My DRS Cluster', you must specify "target": ["Parent Folder 1", "Parent Folder 2", "My DRS
+                Cluster"]. If deploying to a resource pool, you must include the item "Resources" before the resource pool name. For example, if cluster "My Cluster"
+                contains resource pool "My Resource Pool", you must specify "target": ["My Cluster", "Resources", "My Resource Pool"]. ESXi, cluster, and resource pool
+                names must be the same as the names recorded in the vCenter inventory, i.e. if the name in the vCenter inventory is an IP address, the FQDN cannot be
+                provided here, and vice versa. Use the template key 'vm_folder' if you want the deployed appliance to be listed in a different location within the data
+                center's hierarchy.  Note that prechecks only verify the memory of the resource pool.
+                Type: string, array
+            vm_folder:
+                A VM folder in the vCenter Server data center to which to add the appliance.
+                Type: string, array
+        ===================================================================================================================================================================
+        esxi:
+            This subsection describes the ESXi host on which to deploy the appliance. Required if you are deploying the appliance directly on an ESXi host. Fill in either
+            this subsection or the 'vc' subsection.
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            hostname:
+                The IP address or fully qualified domain name (FQDN) of the ESXi host. If an FQDN is provided, it has to be resolvable from the machine that is running the
+                installer.
+                Type: string
+            username:
+                The user name of a user with administrative privileges on the ESXi host.
+                Type: string
+            password:
+                The password of the ESXi host user. If left blank, or omitted, you will be prompted to enter it at the command console during template verification.
+                Type: string
+            deployment_network:
+                The network of the ESXi host to which to connect the new appliance. When the ESXi host has one network, you can omit this parameter.
+                Type: string
+            datastore:
+                The datastore on which to store the files of the appliance. This value has to be either a specific datastore name, or a specific datastore in a datastore
+                cluster. The datastore must be accessible from the ESXi host and must have at least 25 GB of free space. Otherwise, the new appliance might not power on.
+                Type: string
+            port:
+                The port number of the ESXi host. The default value is 443.
+                Type: integer
+            ssl_certificate_verification:
+                Supply the SHA-1 thumbprint (fingerprint) of the server's security certificate in the "thumbprint" key, e.g. "thumbprint":
+                "CA:FE:18:99:11:22:33:44:55:A2:29:FC:59:47:7C:AB:CD:AB:AA:99", or add the key-value pair "verification_mode": "NONE" to skip certificate verification for
+                this server. Note that your server's thumbprint will be different from the example. The only value acceptable for "verification_mode" is "NONE"
+                (case-sensitive), and "thumbprint" and "verification_mode" are mutually exclusive.
+                Type: dictionary
+            target:
+                Optional for the "esxi" section. When deploying to a resource pool, this is the path to the resource pool on the ESXi host where the appliance will be
+                deployed. Be sure to include the "Resources" item. For example, "target": ["Resources", "My Resource Pool"]. Nested resouce pools may also be specified.
+                For example, "target": ["Resources", "Parent Pool", "Child Pool"]. All names are case-sensitive. Note that prechecks only verify the memory of the resource
+                pool.
+                Type: string, array
+        ===================================================================================================================================================================
+        appliance:
+            The deployment option below affects the VCSA's configuration parameters, such as the VCSA's number of vCPUs, the memory size, the storage size, and the maximum
+            numbers of ESXi hosts and VMs which the VCSA can manage. For a list of acceptable values, run the supported deployment sizes help, i.e. vcsa-deploy
+            --supported-deployment-sizes
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            thin_disk_mode:
+                To deploy the appliance with thin mode virtual disks, set the value to 'true'.
+                Type: boolean (true or false)
+            deployment_option:
+                The type of appliance to deploy.
+                Type: None
+            image:
+                A local file path or URL to the vCenter Server Appliance 7.0 installation package. The source is included in the installer ISO file.
+                Type: string
+            image_url_ssl_certificate_verification:
+                Supply the SHA-1 thumbprint (fingerprint) of the server's security certificate in the "thumbprint" key, e.g. "thumbprint":
+                "CA:FE:18:99:11:22:33:44:55:A2:29:FC:59:47:7C:AB:CD:AB:AA:99", or add the key-value pair "verification_mode": "NONE" to skip certificate verification for
+                this server. Note that your server's thumbprint will be different from the example. The only value acceptable for "verification_mode" is "NONE"
+                (case-sensitive), and "thumbprint" and "verification_mode" are mutually exclusive.
+                Type: dictionary
+            name:
+                The name of the appliance to deploy.
+                Type: string
+            ovftool_path:
+                A local file path to OVF Tool executable file.
+                Type: string
+        ===================================================================================================================================================================
+        network:
+            This subsection describes the network settings of the new appliance.
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            ip_family:
+                Network IP address family.
+                Type: JSON string with one of the following values: "ipv4", "ipv6"
+            mode:
+                Network mode. Use this parameter to select how to allocate the IP address of the appliance.
+                Type: JSON string with one of the following values: "static", "dhcp"
+            ip:
+                Network IP address. Required only if the mode is "static". Can be IPv4 or IPv6 based on the specified address family.
+                Type: string
+            dns_servers:
+                A comma-separated list of IP addresses of DNS servers. Can be a JSON array such as ["1.2.3.4", "127.0.0.1"] or a serialized string such as
+                "1.2.3.4,127.0.0.1". This key is optional.
+                Type: string, array
+            prefix:
+                Network prefix length. Use only when the mode is 'static'. Remove if the mode is 'dhcp'. This is the number of bits set in the subnet mask; for instance,
+                if the subnet mask is 255.255.255.0, there are 24 bits in the binary version of the subnet mask, so the prefix length is 24. If used, the values must be in
+                the inclusive range of 0 to 32 for IPv4 and 0 to 128 for IPv6.
+                Type: string
+            gateway:
+                The IP address of the default gateway. Can be "default" when using IPv6.
+                Type: string
+            ports:
+                Port numbers on which the vCenter Server Appliance communicates with the other vSphere components. The input must be a dictionary: "ports":
+                {"rhttpproxy.ext.port2":"13443", "rhttpproxy.ext.port1":"7441"}. You can customize the following ports: rhttpproxy.ext.port1 rhttpproxy.ext.port2.
+                Type: dictionary
+            system_name:
+                Primary network identity. Can be either an IP address or a fully qualified domain name (FQDN). Not supported if the network mode is DHCP, but optional if
+                the network mode is static.
+                Type: string
+        ===================================================================================================================================================================
+        os:
+            This subsection describes the operating system configurations for the new appliance.
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            password:
+                Password of the root user of the Linux operating system of the appliance.  Password must conform to the following requirements:     At least 8 characters
+                No more than 20 characters     At least 1 uppercase character     At least 1 lowercase character     At least 1 number     At least 1 special character
+                (e.g., '!', '(', '@', etc.)     Only visible A-Z, a-z, 0-9 and punctuation (spaces are not allowed)
+                Type: string
+            ntp_servers:
+                Required, unless "time_tools_sync" is provided. To configure NTP time synchronization for the appliance, set the value to a comma-separated list of host
+                names or IP addresses of Network Time Protocol (NTP) servers. Can be a JSON array such as ["ntp1.com", "ntp2.com"] or a serialized string such as
+                "ntp1.com,ntp2.com".
+                Type: string, array
+            ssh_enable:
+                To enable the SSH administrator login option of the appliance, set the value to 'true'. You can change this setting after deployment.
+                Type: boolean (true or false)
+            time_tools_sync:
+                Required, unless "ntp_servers" is provided. To enable the VMware Tools time synchronization option of the appliance, set the value to 'true'. VMware Tools
+                synchronizes the time of the appliance with the time of the ESXi host.
+                Type: boolean (true or false)
+        ===================================================================================================================================================================
+        ovftool_arguments:
+            Use this subsection to add arbitrary arguments to the OVF Tool command that the script generates. You do not need to fill it out in most circumstances.
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            <OVF Tool argument name>:
+                Values entered for these keys are passed to OVF Tool without any verification of compatibility with other generated arguments as '--key=value'. Keys that
+                are not arguments recognized by OVF Tool will cause the script to fail.
+                Type: string, boolean (true or false)
+        ===================================================================================================================================================================
+        sso:
+            Single Sign-On options
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            password:
+                You must set the administrator account password for the Embedded Platform Services Controller  instance added to a vCenter Single Sign-On domain. When you
+                add other Embedded PSC instances to the domain, you must provide the password of the  first Embedded PSC instance. The first Embedded PSC instance becomes
+                the replication partner for all subsequent Embedded PSC instances added to the domain.  Password must conform to the following requirements:     At least 8
+                characters     No more than 20 characters     At least 1 uppercase character     At least 1 lowercase character     At least 1 number     At least 1
+                special character (e.g., '!', '(', '@', etc.)     Only visible A-Z, a-z, 0-9 and punctuation (spaces are not allowed)
+                Type: string
+            domain_name:
+                vCenter Single Sign-On domain name, for example "vsphere.local".
+                Type: string
+            first_instance:
+                Specifies whether you are deploying the first Embedded Platform Services Controller in the domain. To create a new vCenter Single Sign-On domain, set the
+                value to 'true'. To join a replication partner to an existing vCenter Single Sign-On domain, set the value to 'false'.
+                Type: boolean (true or false)
+            replication_partner_hostname:
+                The IP address or fully qualified domain name (FQDN) of the Embedded Platform Services Controller replication partner. Ignored, if this instance is the
+                first instance of the identity domain.
+                Type: string
+            sso_port:
+                The SSO port number of an Embedded Platform Services Controller (PSC), defaulting to 443. If your first_instance PSC has changed its SSO port number, you
+                can override the default value with that custom port number.
+                Type: integer
+            ssl_certificate_verification:
+                Supply the SHA-1 thumbprint (fingerprint) of the server's security certificate in the "thumbprint" key, e.g. "thumbprint":
+                "CA:FE:18:99:11:22:33:44:55:A2:29:FC:59:47:7C:AB:CD:AB:AA:99", or add the key-value pair "verification_mode": "NONE" to skip certificate verification for
+                this server. Note that your server's thumbprint will be different from the example. The only value acceptable for "verification_mode" is "NONE"
+                (case-sensitive), and "thumbprint" and "verification_mode" are mutually exclusive.
+                Type: dictionary
+    =======================================================================================================================================================================
+    ceip:
+        VMware Customer Experience Improvement Program (CEIP)
+    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        description:
+            This product participates in VMware's Customer Experience Improvement Program ('CEIP'). Details regarding the data collected through CEIP and the purposes for
+            which it is used by VMware are set forth at the Trust & Assurance Center at http://www.vmware.com/trustvmware/ceip.html. To join the CEIP for this product, in
+            the template, set 'ceip_enabled': true. To leave the CEIP for this product, set 'ceip_enabled': false. Please confirm your acknowledgement by passing in the
+            parameter --acknowledge-ceip in the command line.
+        ===================================================================================================================================================================
+        settings:
+            CEIP participation options
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            ceip_enabled:
+                This key describes the enabling option for the VMware's Customer Experience Improvement Program (CEIP). By default we have 'ceip_enabled': true, which
+                indicates that you are joining CEIP. If you prefer not to participate in the VMware's CEIP for this product, you must disable CEIP by setting
+                'ceip_enabled': false. You may join or leave VMware's CEIP for this product at any time.
+                Type: boolean (true or false)
+
+Template help ended successfully.

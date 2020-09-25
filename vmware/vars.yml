@@ -32,8 +32,8 @@ manager_guest_id: centos64Guest
 manager_root_password: "{{ lookup('env', 'MANAGER_ROOT_PASSWORD') }}"
 manager_ip: 192.168.95.150
 
-nfs_rpcbind_state: started
 nfs_rpcbind_enabled: true
+nfs_rpcbind_state: started
 nfs_exports:
   - "/public *(rw,sync,no_root_squash)"
 
@@ -51,12 +51,15 @@ esxi_hosts:
     ip: 192.168.95.154
 
 # VCSA
-vcsa_iso: "[AdminShare] _OS/VMWare/VMware-VCSA-all-7.0.0-15952498.iso" # from datastore
+vcsa_template: "t-vcsa7.0.0-v1" # not used
 vcsa_ip: 192.168.95.155
+vcsa_iso: "VMware-VCSA-all-7.0.0-15952498.iso"
+vcsa_nfs_url: 192.168.145.53:/volume1/Software/VMware\ vSphere\ 7.0/
 
 # NSX-T
 nsxt_ova: "[AdminShare] _OS/VMWare/nsx-unified-appliance-3.0.0.0.0.15946739.ova"
 nsxt_ip: 192.168.95.156
-segment: 10.0.1.1
-edge_interface_address: 192.168.95.171
+edge_ip: 192.168.95.157
+edge_interface_ip: 192.168.95.158
 
+segment: 10.0.1.1
