@@ -15,6 +15,13 @@ conformance:
 	# sonobuoy logs
 	# sonobuoy gen --e2e-focus="sig-networking" --e2e-skip="Alpha" | kubectl apply -f -
 
+multitenancy-e2e:
+	git clone https://github.com/kubernetes-sigs/multi-tenancy.git
+	cd multi-tenancy/benchmarks
+	# update config.yaml with your cluster configuration.
+	go test ./e2e/tests
+
+
 auth:
 	# Dex
 	echo "https://github.com/dexidp/dex/blob/master/Documentation/kubernetes.md"

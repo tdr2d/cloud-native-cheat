@@ -26,7 +26,7 @@ partprobe -s || partx -v -a /dev/sda # scan the newly added partition
 fdisk -l # check the new partition
 
 
-## 3. Extend Logical Volumes
+## Extend Logical Volumes
 pvcreate /dev/sda3                   # create physical volume
 vgs                                  # list volume group
 vgextend centos /dev/sda3            # add the physical volume to the centos vg

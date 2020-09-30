@@ -38,3 +38,9 @@ Exposes the Service on a cluster-internal IP. Choosing this value makes the Serv
 Exposes the Service externally using a cloud provider's load balancer
 ### ExternalName
 Maps the Service to the contents of the externalName field (e.g. foo.bar.example.com), by returning a CNAME record
+
+## CNIs
+eks calico install https://www.eksworkshop.com/beginner/120_network-policies/calico/install_calico/
+
+## Multi cluster management
+https://github.com/kubesphere/kubesphere
