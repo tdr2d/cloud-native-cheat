@@ -2,6 +2,57 @@
 - hosts: localhost
   gather_facts: no
   tasks:
+    - file:
+        path: "{{ install_dir }}/vcsa"
+        state: directory
+
+    - name: NSXT | Clone template
+      vmware_guest:
+        hostname: "{{ vsphere_vcenter }}"
+        username: "{{ vsphere_user }}"
+        password: "{{ vsphere_password }}"
+        datacenter: "{{ vsphere_datacenter }}"
+        validate_certs: no
+        folder: "{{ vsphere_folder }}"
+        resource_pool: "{{ vsphere_resource_pool.split('/')[-1] }}"
+        name: "{{ item.name }}"
+        state: poweredon
+        template: "{{ esxi_template }}"
+        disk:
+        - size_gb: 4
+          type: thin
+          datastore: "{{ vsphere_datastore }}"
+        - size_gb: 4
+          type: thin
+          datastore: "{{ vsphere_datastore }}"
+        - size_gb: 8
+          type: thin
+          datastore: "{{ vsphere_datastore }}"
+        hardware:
+          memory_mb: 32768
+          num_cpus: 4
+          scsi: paravirtual
+          num_cpu_cores_per_socket: 4
+        networks:
+        - name: "{{ vsphere_network }}"
+        - name: "{{ vsphere_network }}"
+        vapp_properties:
+          - {"id": "guestinfo.hostname",    "value": "{{ item.name }}"}
+          - {"id": "guestinfo.ipaddress",   "value": "{{ item.ip }}"}
+          - {"id": "guestinfo.netmask",     "value": "{{ netmask_long }}"}
+          - {"id": "guestinfo.gateway",     "value": "{{ gateway }}"}
+          - {"id": "guestinfo.vlan",        "value": "4095"}
+          - {"id": "guestinfo.dns",         "value": "{{ dns1 }} {{ dns2 }}"}
+          - {"id": "guestinfo.domain",      "value": "{{ item.name }}.{{ nested_env }}.{{ dnsearch }}"}
+          - {"id": "guestinfo.ntp",         "value": "{{ ntp }}"}
+          - {"id": "guestinfo.syslog",      "value": "192.168.1.200"}
+          - {"id": "guestinfo.password",    "value": "VMware1!"}
+          - {"id": "guestinfo.ssh",         "value": "True"}
+          - {"id": "guestinfo.createvmfs",  "value": "False"}
+      loop: "{{ esxi_hosts }}"
+      delegate_to: localhost  
+
+
     - name: NSXT | Compile main.tf
       template: src=main.tf dest={{ install_dir }}
 

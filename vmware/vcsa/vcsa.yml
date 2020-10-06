@@ -4,46 +4,54 @@
   vars:
     vcsa_password: "{{ lookup('password', '{{ install_dir }}/vcsa/password length=10 chars=ascii_letters,digits,hexdigits') }}"
   tasks:
-    # - file:
-    #     path: "{{ install_dir }}/vcsa"
-    #     state: directory
-    #   delegate_to: localhost
-    
-    # - set_fact:
-    #     vcsa_password: "{{ lookup('password', '{{ install_dir }}/vcsa/password length=10 chars=ascii_letters,digits,hexdigits') }}"
-
     - name: VCSA | Generate config
       template:
         src: vcsa_insall_config.json
         dest: "/root"
     
-    # - name: VCSA | Download Installer
-    #   shell: |
-    #     [ ! -e /root/{{ vcsa_iso }} ] && ( mount -t {{ vcsa_nfs_url }} /mnt && cp /mnt/{{ vcsa_iso }} /root/ && umount /mnt ) &&\
-    #     mount -o loop /root/{{ vcsa_iso }} /mnt
+    - name: VCSA | Download Installer
+      shell: |
+        [ ! -e /root/{{ vcsa_iso }} ] && ( mount -t {{ vcsa_nfs_url }} /mnt && cp /mnt/{{ vcsa_iso }} /root/ && umount /mnt ) &&\
+        mount -o loop /root/{{ vcsa_iso }} /mnt
     
-    # - name: "VCSA | Install appliance | ssh root@{{ manager_ip }} -c 'tail -f ~/root/workflow_*/'"
-    #   shell: |
-    #     rm -f /root/workflow_* && \
-    #     /mnt/vcsa-deploy install -v --log-dir=/root --no-ssl-certificate-verification --acknowledge-ceip --accept-eula \
-    #     /root/vcsa_insall_config.json
-    #   register: vcsa_logs
+    - name: "VCSA | Install appliance | ssh root@{{ manager_ip }} -c 'tail -f ~/root/workflow_*/'"
+      shell: |
+        rm -f /root/workflow_* && \
+        /mnt/vcsa-deploy install -v --log-dir=/root --no-ssl-certificate-verification --acknowledge-ceip --accept-eula \
+        /root/vcsa_insall_config.json
+      register: vcsa_logs
 
-    # - name: VCSA | Wait for vcenter
-    #   vmware_about_facts:
-    #     hostname: "{{ vcsa_ip }}"
-    #     username: "administrator@vsphere.local"
-    #     password: "VMware1!VMware1!"
-    #     validate_certs: no
-    #   delegate_to: localhost
-    #   retries: 20
-    #   delay: 60
-    #   register: result
-    #   until: result is succeeded
+    - name: VCSA | Wait for vcenter
+      vmware_about_facts:
+        hostname: "{{ vcsa_ip }}"
+        username: "administrator@vsphere.local"
+        password: "VMware1!VMware1!"
+        validate_certs: no
+      delegate_to: localhost
+      retries: 30
+      delay: 60
+      register: result
+      until: result is succeeded
     
-    # - debug: var=result
+    - debug: var=result
     
-    # Basic deploy of a service
-    # - terraform:
-    #     project_path: '{{ project_dir }}'
-    #     state: present
+    - file:
+        path: "{{ install_dir }}/vcsa"
+        state: directory
+      delegate_to: localhost
+      
+    - set_fact:
+        vcsa_password: "{{ lookup('password', '{{ install_dir }}/vcsa/password length=10 chars=ascii_letters,digits,hexdigits') }}"
+
+    - template:
+        src: "{{ item }}"
+        dest: "{{ install_dir }}/vcsa"
+      loop:
+        - vcsa_main.tf
+        - variables.tf
+        - terraform.tfvars
+
+    - terraform:
+        project_path: '{{ install_dir }}/vcsa'
+        state: present
+      delegate_to: localhost
