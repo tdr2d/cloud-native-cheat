@@ -1,0 +1,57 @@
+{
+    "description": "RHEL template",
+    "variables": {
+      "vsphere_user": "{{ '{{env `VSPHERE_USER`}}' }}",
+      "vsphere_password": "{{ '{{env `VSPHERE_PASSWORD`}}' }}"
+    },
+    "builders": [
+      {
+        "type": "vsphere-iso",
+        "vcenter_server": "{{ vsphere_vcenter }}",
+        "username": "{{ '{{user  `vsphere_user`}}' }}",
+        "password": "{{ '{{user  `vsphere_password`}}' }}",
+        "insecure_connection": true,
+        "vm_name": "t-rhel-7-8.adlere.priv",
+        "datastore": "{{ vsphere_datastore }}",
+        "cluster": "{{ vsphere_cluster }}",
+        "folder": "{{ vsphere_folder }}",
+        "resource_pool": "{{ vsphere_resource_pool }}",
+  
+        "storage": [
+          {
+            "disk_size": 12000,
+            "disk_thin_provisioned": true
+          },
+          {
+            "disk_size": 12000,
+            "disk_thin_provisioned": true
+          }
+        ],
+  
+        "network_adapters": [
+          {
+            "network": "{{ vsphere_network }}",
+            "network_card": "vmxnet3"
+          }
+        ],
+        "CPUs": 4,
+        "RAM": 4096,
+        "iso_paths": [
+          "[AdminShare] _OS/rhel-server-7.8-x86_64-dvd.iso",
+          "[] /usr/lib/vmware/isoimages/linux.iso"
+        ],
+        "guest_os_type": "rhel7_64Guest",
+        "floppy_files": [
+          "{{ work_dir }}/ks.cfg"
+        ],
+  
+        "boot_command": [
+          "<tab><wait> text ks=hd:fd0:/ks.cfg<enter><wait>"
+        ],
+        "communicator" : "ssh",
+        "ssh_username": "root",
+        "ssh_password": "{{ kernet_ssh_pass }}",
+        "ssh_timeout" : "10m"
+      }
+    ]
+  }
