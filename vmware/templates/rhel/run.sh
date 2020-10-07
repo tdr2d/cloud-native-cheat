@@ -18,3 +18,4 @@ ansible localhost -m template -a "src=ks.cfg dest=${tmpdir}/ks.cfg" -e @../../va
     -e work_dir=$tmpdir
 
 cd $tmpdir && packer build packer.json
+rm -rf $tmpdir
