@@ -21,14 +21,10 @@ install: ## Install locally needed roles
 ##
 ## Nested Env
 checks:
-	ansible-playbook checks.yml -e @$(VARYML)
+	ansible-playbook nested/checks.yml -e @$(VARYML)
 manager: checks ## 01 Create and configure a DHCP server
-	ansible-playbook -i hosts manager/manager.yml -e @$(VARYML)
+	ansible-playbook -i hosts nested/manager/manager.yml -e @$(VARYML)
 esxi: checks 	## 02 Create nested ESXis
-	ansible-playbook -i hosts esxi/esxi.yml -e @$(VARYML)
+	ansible-playbook -i hosts nested/esxi/esxi.yml -e @$(VARYML)
 vcsa: checks 	## 02 Create nested VCSA
-	ansible-playbook -i hosts vcsa/vcsa.yml -e @$(VARYML)
-
-##
-clean:		## zz Clean temp directories
-	rm -rf /tmp/c95
+	ansible-playbook -i hosts nested/vcsa/vcsa.yml -e @$(VARYML)
