@@ -1,4 +1,7 @@
 
+get_helm:
+	curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
 deployments:
 	kubectl rollout history deployment/app
 	kubectl rollout undo deployment/app --to-revision=2 --record

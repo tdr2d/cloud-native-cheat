@@ -5,11 +5,6 @@ import pyquery
 import os
 import requests
 
-FIELDS = {
-    "url": {"required": True, "type": "str"},
-    "ip": {"required": True, "type": "str"}
-}
-
 
 # User defined functions
 def get_html(url, ip):
