@@ -66,3 +66,13 @@ set_fact: maximum={{ my_json | json_query('[*].index ) | max }} # => 2
 
 # Custom python script
 - shell: "python3 {{ role_path }}/files/where_is_my_server.py {{ item.ip }}"
+
+
+
+# K8s
+- name: Check readiness of pod
+  shell: "oc get pod {{ pod_name }} -n {{ namespace }} -o jsonpath='{.status.phase}'"
+  register: output
+  untill: 'output.stdout != "Running"'
+  retries: 5
+  delay: 3

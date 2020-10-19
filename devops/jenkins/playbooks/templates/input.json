@@ -1,0 +1,16 @@
+{
+  "ccxIndex": "adg",
+  "ccxType": "ccx",
+  "parametres": [
+       {
+          "nomParam": "CORE_COMMON_SHAREDCONNECTIONS_JMS_EMS_MSG__PASSWORD",
+          "valeurParam": "coreaudit_1_logevent_splunk_0738b31255a34757858cf23883234171"
+      },
+      {
+        "nomParam": "CORE2_COMMON_SHAREDCONNECTIONS_JMS_EMS_MSG__PASSWORD",
+        "valeurParam": "coreaudit_1_logevent_splunk_0738b31255a34757858cf23883234171"
+      }
+    ],
+    "revision": 9,
+    "timestamp": 1554132168
+}

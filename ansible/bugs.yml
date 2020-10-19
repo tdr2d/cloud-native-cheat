@@ -1,3 +1,0 @@
-# Do not use public attributes
-# https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#creating-valid-variable-names
-debug: var=var.items              # items property is a buildins, use var['items'] 

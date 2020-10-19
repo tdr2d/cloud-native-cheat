@@ -2,8 +2,7 @@
 
 set -euo pipefail
 
-# Usage: ./
-
+# Usage: ./fix_user.sh wrong@gmail.com thomas-webber
 wrong_email=$1
 to_user=$2
 

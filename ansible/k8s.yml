@@ -1,6 +1,0 @@
-- name: Check readiness of pod
-  shell: "oc get pod {{ pod_name }} -n {{ namespace }} -o jsonpath='{.status.phase}'"
-  register: output
-  untill: 'output.stdout != "Running"'
-  retries: 5
-  delay: 3

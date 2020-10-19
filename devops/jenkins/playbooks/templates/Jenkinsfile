@@ -1,0 +1,15 @@
+import groovy.json.JsonSlurperClassic;
+
+node ("master") {
+
+    stage("Parameters")
+    {
+        def data = new JsonSlurperClassic().parseText(params.inputData)
+        yaml_lines = ""
+        for (i = 0; i < data.parametres.size() ; i++) {
+            yaml_lines += "${data.parametres[i].nomParam}: \"${data.parametres[i].valeurParam}\"\n"
+        }
+        echo yaml_lines
+        writeFile file: 'job_helm_values.yml', text: yaml_lines
+    }
+}

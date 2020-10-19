@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars_files:
+    - vars.yml
+  tasks:
+  - name: Trigger Build
+    uri:
+      url: "http://{{ jenkins_host }}:{{ jenkins_port }}/job/{{ job_name }}/buildWithParameters?token={{ job_token }}&action=DeployTest&inputData={{ lookup('file', 'templates/input.json') | urlencode }}"
+      method: GET
+      validate_certs: false
+      user: "{{ jk_user }}"
+      password: "{{ jk_password }}"
+      force_basic_auth: yes
+      status_code: 201

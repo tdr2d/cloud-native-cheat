@@ -67,5 +67,3 @@ systemctl enable vault && systemctl start vault
 vault server -config=/etc/vault/config.hcl
 
 vault operator init # initialize vault agents, generate 4 private keys and 1 root token
-
-

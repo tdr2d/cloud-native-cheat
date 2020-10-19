@@ -1,0 +1,9 @@
+jenkins_host: 192.168.95.150
+jenkins_port: 8080
+container: jenkins
+
+jk_user: admin
+jk_password: a203159507ff4cca8058364b5489284c
+
+job_name: test
+job_token: my_secret_token

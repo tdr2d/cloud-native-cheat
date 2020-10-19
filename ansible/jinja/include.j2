@@ -1,0 +1,8 @@
+{% macro parentLoader() %}
+{% include "LogEventToFile/HiveToLocal.txt" %}
+{% endmacro %}
+
+{
+  "message": {{ parentLoader()|trim|jsonify }},
+  "runtime": {{runtime}}
+}

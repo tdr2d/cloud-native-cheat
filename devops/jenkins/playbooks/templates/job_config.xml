@@ -1,0 +1,50 @@
+<?xml version='1.1' encoding='UTF-8'?>
+{% macro jenkinfile() %}{% include 'Jenkinsfile' with context %}{% endmacro %}
+<flow-definition plugin="workflow-job@2.39">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>action</name>
+          <description>OPA Engine Action</description>
+          <defaultValue>Deploy</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>inputData</name>
+          <description>ADD Parameters (JSON)</description>
+          <defaultValue></defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>enableFileProvider</name>
+          <description>Enable file configuration provider</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>enableGCPProvider</name>
+          <description>Enable GCP configuration provider</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>enableClusterMappingProvider</name>
+          <description>Enable ClusterMapping configuration provider</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.83">
+    <script>{{ jenkinfile() | replace('"', '&quot;') | replace("'", '&apos;') | replace('<', '&lt;') | replace('>', '&gt;') }}</script>
+    <sandbox>false</sandbox>
+  </definition>
+  <triggers/>
+  <authToken>my_secret_token</authToken>
+  <disabled>false</disabled>
+</flow-definition>
