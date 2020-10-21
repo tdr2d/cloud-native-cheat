@@ -5,11 +5,19 @@ node ("master") {
     stage("Parameters")
     {
         def data = new JsonSlurperClassic().parseText(params.inputData)
+
+        // Build yaml file job_helm_values.yml
         yaml_lines = ""
         for (i = 0; i < data.parametres.size() ; i++) {
             yaml_lines += "${data.parametres[i].nomParam}: \"${data.parametres[i].valeurParam}\"\n"
         }
         echo yaml_lines
         writeFile file: 'job_helm_values.yml', text: yaml_lines
+    }
+
+    stage("Helm") {
+        // TODO 
+        // sh("curl ${registry}/${helm_repo}/${helm_charts}")
+        // sh("helm install -e job_helm_values.yml")
     }
 }
