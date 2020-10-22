@@ -16,6 +16,8 @@ EXEMPLE = {
   "key4.nested": "value"
 }
 
+# Usage: ./unflatten_json.py
+
 def unflatten(flattened_dict):
   d = {}
   for key, value in flattened_dict.items():
