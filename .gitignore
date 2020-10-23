@@ -2,3 +2,6 @@
 vmware/env
 vmware/hosts
 terraform/nsx-t/.terraform
+
+a.out
+*.so
