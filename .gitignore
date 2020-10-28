@@ -3,5 +3,6 @@ vmware/env
 vmware/hosts
 terraform/nsx-t/.terraform
 
+*.pb.go
 a.out
 *.so

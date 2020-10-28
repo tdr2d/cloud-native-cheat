@@ -1,4 +1,4 @@
-.PHONY: plugins
+.PHONY: plugins grpc
 
 install:
 	cd /tmp && curl -L -o go.tar.gz https://golang.org/dl/go1.15.3.linux-amd64.tar.gz
@@ -18,3 +18,12 @@ test_plugins:
 
 clean_plugins:
 	cd plugins && rm -rf *.so && rm -f a.out
+
+
+### GRPC
+init_pb:
+	go install google.golang.org/protobuf/cmd/protoc-gen-go
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
+
+genpb:
+	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative pb/*.proto
