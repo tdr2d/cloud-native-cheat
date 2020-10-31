@@ -11,8 +11,8 @@ set -euo pipefail
 readonly repo_key="helm_demo"
 readonly repo_url="${ARTIFACTORY_URL}/artifactory/${repo_key}"
 readonly chart_name="my-nginx"
-readonly chart_version="0.0.1"
-readonly namespace=default
+readonly chart_version="0.0.2"
+readonly namespace=demo-helm
 
 ## Usage ./helm.sh options
 ##
@@ -53,14 +53,13 @@ artifactory() {
 
 ## deploy: deploy helm chart to kubernetes
 deploy() {
-  helm --debug install ${chart_name} ${repo_url}/${chart_name}-${chart_version}.tgz \
-    --set image=nginx --insecure-skip-tls-verify -n ${namespace}
-  watch kubectl get pods -n default
-  helm list
+  echo "helm --debug install ${chart_name} ${repo_url}/${chart_name}-${chart_version}.tgz \
+    --values /tmp/my-values.yaml --insecure-skip-tls-verify -n ${namespace}"
+  # watch kubectl get pods -n default
+  # helm list
 }
 
 ## check_deployed: check if release exists and is deployed
-# TODO check if deployment exists on the cluster
 check_deployed() {
   if helm list --short --deployed | grep -q ${chart_name}; then
     echo "${chart_name} exists"

@@ -10,6 +10,7 @@ install:	## Install Go
 	sudo ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt 
 	go get -u github.com/golang/protobuf/{proto,protoc-gen-go} # grpc stuffs
 	go get -u google.golang.org/grpc
+	cd /tmp && curl -Lo buf "https://github.com/bufbuild/buf/releases/download/v0.28.0/buf-$$(uname)-x86_64" && chmod +x buf && sudo mv buf /usr/local/bin # buf
 
 ##
 ## Tests
@@ -33,11 +34,7 @@ clean_plugins:
 
 ##
 ## Protobuf
-buf_install: ## Install buf tool
-	cd /tmp && curl -Lo buf "https://github.com/bufbuild/buf/releases/download/v0.28.0/buf-$$(uname)-x86_64"
-	cd /tmp && chmod +x buf && sudo mv buf /usr/local/bin
-
-buf_lint:  
+buf_lint:	## Lint proto files
 	buf check lint
 
 gen: ## Generate protobuf code
@@ -46,4 +43,4 @@ gen: ## Generate protobuf code
 	done
 
 clean:  ## Remove **pb.go
-	rm $$(find . -name "*pb.go")
+	rm $$(find . -name "*pb.go" | tee /dev/tty)
