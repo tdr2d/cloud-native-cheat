@@ -1,8 +1,0 @@
-syntax = "proto3";
-option go_package = "example.com/proto";
-
-message CPU {
-  string name = 2;
-  uint32 number_cores = 3;
-  double max_ghz = 6;
-}
