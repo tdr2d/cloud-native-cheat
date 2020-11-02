@@ -1,2 +1,7 @@
 # Delete all
 ESC -> gg -> dG
+
+# Fix window to unix ^M undesired character corruption
+ESC
+:set ff=unix
+:wq!

@@ -7,6 +7,11 @@
     - https://developers.google.com/protocol-buffers/docs/reference/go-generated#package
 
 
+## Pointer vs Value ?
+- it is not about performance
+- if you want to share a value with a function or method use pointer
+- if you want to share a value with it's method, use a pointer receiver (not safe for concurrent access) 
+
 ## Go module
 - Generate go project `go mod init github.com/thomas-webber/cloud-native-cheat/go`
 - Add dependencies with `go get <url>`
