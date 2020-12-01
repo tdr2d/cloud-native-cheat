@@ -10,5 +10,5 @@ This can deploy:
 For graphana, see https://github.com/grafana/helm-charts/tree/main/charts/grafana
 
 
-# Prometheus Operator
+# Prometheus Operator Helm chart
 Follow Documentation https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack
