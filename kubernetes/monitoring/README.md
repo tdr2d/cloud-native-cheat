@@ -12,3 +12,4 @@ For graphana, see https://github.com/grafana/helm-charts/tree/main/charts/grafan
 
 # Prometheus Operator Helm chart
 Follow Documentation https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack
+CRD Prometheus: 

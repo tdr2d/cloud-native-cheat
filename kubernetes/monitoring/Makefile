@@ -7,7 +7,7 @@ add_repos:
 	helm repo add stable https://charts.helm.sh/stable # for kube-state-metrics
 	helm repo update
 
-deploy:
+deploy_helm:
 	kubectl create ns monitoring || echo "Passthrough"
 	helm upgrade --install -n monitoring prometheus prometheus-community/prometheus -f prometheus-values.yml
 	oc create route edge --service prometheus-server -n monitoring
@@ -29,4 +29,4 @@ go_demo:
 	kubectl create deployment go-prometheus -n test --image quay.io/brancz/prometheus-example-app:v0.2.0
 	kubectl expose deployment/go-prometheus -n test --port 8080 --target-port 8080
 	kubectl port-forward -n test svc/go-prometheus 8080:8080
-	kubectl apply -f service-monitor.yml
+	kubectl apply -f prometheus-operator/service-monitor.yml
