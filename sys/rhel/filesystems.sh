@@ -13,7 +13,7 @@ fdisk -l # check the new disk size
 
 
 ## Resize existing partition
-printf "d\n2\nn\np\n2\nw\n" > /tmp/delete_part_sda2 && fdisk /dev/sda < /tmp/delete_part_sda2 # delete /dev/sda2 partition
+fdisk /dev/sda  # delete /dev/sda2 partition, create new partition, type 8e for xfs, write changes
 partprobe # While on-disk partition table has been updated, observe that on-memory kernel partition table has not
 partx -u /dev/vda # Execute partx (provided by util-linux package to update the in-memory kernel partition table from the on-disk partition table
 cat /proc/partitions | grep sd # Verify that in-memory kernel partition table has been updated with the new size:
