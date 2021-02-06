@@ -15,15 +15,24 @@ spec:
     - effect: NoSchedule
       key: node-role.kubernetes.io/master
       operator: Exists
+  topologySpreadConstraints: # EvenPodsSpread fg. Can be defaulted in KubeSchedulerConfiguration (DefaultPodTopologySpread fg)
+    - maxSkew: 1             # max distribution diff (eg: 3 pods zone1, 1 pod zone2 = 3 - 1 = 2)
+      topologyKey: zone      # key of node labels
+      whenUnsatisfiable: DoNotSchedule # or ScheduleAnyway
+      labelSelector:         # key of node labels
+        matchLabels:
+          foo: bar
+    - maxSkew: 1
+      topologyKey: node  # spread among nodes
+      labelSelector:
+        matchLabels:
+          foo: bar
   affinity:
     podAntiAffinity:                              # rule to force one pod per node
       requiredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:
             matchExpressions:
-              - key: app
-                operator: In
-                values:
-                  - app-name
+              - {key: app, operator: In, values: [app-name]}
           topologyKey: kubernetes.io/hostname # spread among nodes
   #
   ## CONTAINERS
@@ -85,12 +94,12 @@ spec:
     configMap:
       name: fluentd-config
   - name: varlog                  # Volume emptyDir, can be shared between containers
-    emptyDir: {}
+    emptyDir: {Medium: Memory}
   - name: host-root-volume  	    # Volume, share directory with the node host
     hostPath:
       path: /
   - name: projected-volume
-    projected:
+    projected: # compile multiple source in one dir
       sources:
       - configMap:
         name: nsx-ncp-config

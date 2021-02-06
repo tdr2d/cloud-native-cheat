@@ -29,3 +29,12 @@ auth:
 	# Dex
 	echo "https://github.com/dexidp/dex/blob/master/Documentation/kubernetes.md"
 	echo "https://github.com/dexidp/dex/tree/master/examples"
+
+
+registry_access_per_namespace:
+	oc create secret docker-registry artifactory-secret \
+		--docker-server=<registry> \
+		--docker-username=<username> \
+		--docker-password=<password>
+
+	oc secrets link default artifactory-secret --for=pull

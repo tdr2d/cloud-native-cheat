@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus
+  namespace: monitoring
+  labels:
+    prometheus: prometheus
+spec:
+  serviceAccountName: namespace-scrapper
+  #externalUrl: 'https://prometheus-k8s-openshift-monitoring.apps.ocp4-5.adlere.priv/'
+  listenLocal: true
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  podMonitorNamespaceSelector: {}
+  podMonitorSelector: {}
+  serviceMonitorNamespaceSelector: {}
+  rules:
+    alert: {}
+  arbitraryFSAccessThroughSMs: {}
+  version: v2.22.2
+  image: quay.io/prometheus/prometheus:v2.22.1
+  retention: 15d

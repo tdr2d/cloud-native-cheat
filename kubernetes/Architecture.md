@@ -27,7 +27,8 @@ Place the pods on the best nodes
 - Fetching logs for pods. (api to kubelet)
 - Attaching (through kubectl) to running pods (api to kubelet)
 ### Kube proxy
-Ensure connectivity between pods across nodes
+Ensure connectivity between pods across nodes.
+Is not a real proxy, but connect pod together by configuring iptables.
 
 ## Services
 ### NodePort

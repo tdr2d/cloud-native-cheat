@@ -1,0 +1,21 @@
+/etc/sysconfig/network-scripts/ifcfg-bond0
+DEVICE="bond0"
+NAME=bond0
+TYPE=Bond
+BONDING_MASTER=yes
+ONBOOT="yes"
+BOOTPROTO="none"
+USERCTL="no"
+BONDING_OPTS="mode=4 miimon=100"
+NM_CONTROLLED=yes
+BOOTPROTO=none
+IPADDR=XX.XXX.XXX.XXX
+PREFIX=XX
+GATEWAY=XX.XXX.XXX.XXX
+DNS1=10.103.162.104
+DNS2=10.103.162.105
+DEFROUTE=yes
+ 
+Vérification
+systemctl restart network 
+cat /proc/net/bonding/bond0
