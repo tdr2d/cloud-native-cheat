@@ -6,3 +6,4 @@ terraform/nsx-t/.terraform
 *.pb.go
 a.out
 *.so
+.env
