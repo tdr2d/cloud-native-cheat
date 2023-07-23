@@ -1,4 +1,5 @@
 # oc -as system:serviceaccount:project:name
+# kubectl auth can-i VERB [TYPE | TYPE/NAME | NONRESOURCEURL] [options]
 ---                                                     # ROLE
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role

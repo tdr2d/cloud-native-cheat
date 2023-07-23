@@ -1,0 +1,59 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nextcloud
+    statefulset.kubernetes.io/pod-name: nextcloud-0
+  name: nextcloud
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nextcloud
+    statefulset.kubernetes.io/pod-name: nextcloud-0
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nextcloud
+spec:
+  selector:
+    matchLabels:
+      app: nextcloud
+  serviceName: "nextcloud"
+  replicas: 1
+  minReadySeconds: 10 # by default is 0
+  template:
+    metadata:
+      labels:
+        app: nextcloud
+    spec:
+      containers:
+      - name: nextcloud
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  chown -R www-data:www-data /var/www/html
+        image: nextcloud:27.0.1
+        env:
+        - name: PHP_UPLOAD_LIMIT
+          value: '8G'
+        volumeMounts:
+        - name: data
+          mountPath: /var/www/html
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "csi-cinder-classic"
+      resources:
+        requests:
+          storage: 25Gi

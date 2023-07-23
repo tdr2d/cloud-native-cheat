@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nextcloud
+  name: nextcloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nextcloud
+  template:
+    metadata:
+      labels:
+        app: nextcloud
+    spec:
+      # initContainers:
+      # - image: alpine:3.18.2
+      #   name: init
+      #   command: 
+      #   - /bin/ash
+      #   - -c
+      #   - |
+      #     cp /tmp/custom.config.php /opt/conf-files/custom.config.php
+      #   volumeMounts:
+      #   - name: nextcloud-config
+      #     mountPath: /tmp
+      #   - name: conf-files
+      #     mountPath: /opt/conf-files
+        
+      containers:
+      - image: nextcloud:27.0.1-fpm
+        name: nextcloud
+        command: 
+        - /bin/bash
+        - -c
+        - |
+          set -euo pipefail
+          mkdir -p /var/www/html/config
+          cat << EOF > /var/www/html/config/config.php
+          <?php
+          \$CONFIG = [
+          'installed' => true,
+          'version' => '7.0.2.1',
+          'instance'
+          'config_is_read_only' => false,
+          'loglevel' => 0,
+          'dbtype' => 'pgsql',
+          'dbhost' => getenv('POSTGRES_HOST'),
+          'dbname' => getenv('POSTGRES_DB'),
+          'dbuser' => getenv('POSTGRES_USER'),
+          'dbpass' => getenv('POSTGRES_PASSWORD'),
+          'objectstore' => array(
+              'class' => '\OC\Files\ObjectStore\S3',
+              'arguments' => array(
+                'bucket' => getenv('OBJECTSTORE_S3_BUCKET'),
+                'region' => getenv('OBJECTSTORE_S3_REGION'),
+                'hostname' => getenv('OBJECTSTORE_S3_HOST'),
+                'port' => getenv('OBJECTSTORE_S3_PORT'),
+                'sse_c_key' => getenv('OBJECTSTORE_S3_SSE_C_KEY'),
+                'objectPrefix' => '',
+                'verify_bucket_exists' => false,
+              )
+            ),
+            'passwordsalt' => getenv('PASSWORDSALT'),
+            'secret' => getenv('SECRET'),
+            'trusted_domains' => [getenv('SUBDNS1')]
+          ];
+          EOF
+          chown www-data:www-data /var/www/html/config/config.php
+          /entrypoint.sh php-fpm
+        envFrom:
+        - secretRef:
+            name: nextcloud-env
+        volumeMounts:
+        - name: php-files
+          mountPath: /var/www/html
+        # - name: conf-files
+        #   mountPath: /opt/conf-files
+      - image: nginx:stable-alpine3.17-slim
+        name: nginx
+        volumeMounts:
+        - name: php-fpm-conf
+          mountPath: /etc/nginx/conf.d/
+        - name: php-files
+          mountPath: /var/www/html
+      
+      volumes:
+      - name: nextcloud-config
+        configMap:
+          name: nextcloud-config
+      - name: php-fpm-conf
+        configMap:
+          name: php-fpm-conf
+      - name: php-files
+        emptyDir:
+          sizeLimit: 1Gi
+      - name: conf-files
+        emptyDir: {}

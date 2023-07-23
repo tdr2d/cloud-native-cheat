@@ -36,25 +36,45 @@ spec:
           topologyKey: kubernetes.io/hostname # spread among nodes
   #
   ## CONTAINERS
+initContainers: # hack to make configmap editable
+- image: alpine:3.18.2
+  name: init
+  command: 
+  - /bin/bash
+  - -c
+  - |
+    #!/bin/bash
+    cp /tmp/custom.config.php /opt/conf-files/custom.config.php
+  volumeMounts:
+  - name: nextcloud-config
+    mountPath: /tmp
+  - name: conf-files
+    mountPath: /opt/conf-files
+
   containers:
   - name: mycontainer
-    image: nginx
+    image: busybox:latest
     imagePullPolicy: IfNotPresent # Kubelet skips pulling an image if it already exists
-    command:
-      - /bin/sh
-      - -c
-      - |
-        #!/bin/sh
-        set -euo pipefail
-        source /run/etcd/environment
+    lifecycle: # execute command before launching container entrypoint
+      postStart:
+        exec:
+          command:
+            - /bin/sh
+            - -c
+            - |
+              chown -R www-data:www-data /var/www/html
+    envFrom:
+    - secretRef:
+        name: s3-share-secrets    # Name of the Secret resource, secret must be created via k create secret --from-en-file=path
     volumeMounts:
-    - name: mysecret              # Secret volume mount
+    - name: mysecret              # Secret volume mount, mounted secret file is always READ-ONLY 
       mountPath: "/etc/foo"
     - name: config-volumne
-      mountPath: /etc/fluentd-config
+      mountPath: /etc/fluentd-config/custom.config  # use full path to write only 1 file CONFIGMAP will always be READ-ONLY
+      subPath: custom.config                        # use subPath to write only 1 file CONFIGMAP will always be READ-ONLY
     env:
       - name: API_URL             # inline env variable
-        value: "https://lb.ocplab.adlere.priv"
+        value: "https://lb.ocplab.example.priv"
       - name: SECRET_USERNAME
         valueFrom:                # Secret env mount
           secretKeyRef:
@@ -94,7 +114,8 @@ spec:
     configMap:
       name: fluentd-config
   - name: varlog                  # Volume emptyDir, can be shared between containers
-    emptyDir: {Medium: Memory}
+    emptyDir:
+      sizeLimit: 1000Mi
   - name: host-root-volume  	    # Volume, share directory with the node host
     hostPath:
       path: /
