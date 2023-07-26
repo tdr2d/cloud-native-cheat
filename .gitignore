@@ -7,3 +7,5 @@ terraform/nsx-t/.terraform
 a.out
 *.so
 .env
+
+kubernetes/network/octavia-ingress/.ingress_openstack

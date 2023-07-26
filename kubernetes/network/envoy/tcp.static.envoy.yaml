@@ -1,0 +1,35 @@
+admin:
+  address:
+    socket_address: { address: 0.0.0.0, port_value: 9901 }
+
+static_resources:
+  listeners:
+  - name: listener_tcp_80
+    address:
+      socket_address: { address: 0.0.0.0, port_value: 10000 }
+    filter_chains:
+    - filters:
+        - name: envoy.filters.network.tcp_proxy
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
+            stat_prefix: destination
+            cluster: cluster_k8s
+  clusters:
+  - name: cluster_k8s
+    connect_timeout: 0.25s
+    type: STATIC
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: k8s_ingress_controller
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: 10.0.96.140
+                port_value: 32405
+        - endpoint:
+            address:
+              socket_address:
+                address: 10.0.99.110
+                port_value: 32405

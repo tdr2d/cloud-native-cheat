@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: octavia-ingress-controller
+  labels:
+    app: octavia-ingress-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: octavia-ingress-controller
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: octavia-ingress-controller
+    spec:
+      serviceAccountName: octavia-ingress-controller
+      containers:
+      - image: registry.k8s.io/provider-os/octavia-ingress-controller:v1.27.1
+        name: octavia-ingress-controller
+        args:
+            - /bin/octavia-ingress-controller
+            - --config=/etc/config/octavia-ingress-controller-config.yaml
+        volumeMounts:
+        - name: ingress-openstack-conf
+          mountPath: /etc/config/
+          readOnly: true
+      volumes:
+        - name: ingress-openstack-conf
+          secret:
+            secretName: ingress-openstack-conf
