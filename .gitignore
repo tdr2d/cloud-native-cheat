@@ -8,4 +8,5 @@ a.out
 *.so
 .env
 
-kubernetes/network/octavia-ingress/.ingress_openstack
+.ingress_openstack
+yggdrasil.yaml
