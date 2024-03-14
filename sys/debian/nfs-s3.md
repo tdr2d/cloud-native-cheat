@@ -29,7 +29,5 @@ aws s3 --endpoint-url https://s3.gra.io.cloud.ovh.net/ --region gra ls s3://tdr2
 ```
 
 
-
 # Benchmark
-https://github.com/kahing/goofys
-https://docs.gitlab.com/ee/administration/operations/filesystem_benchmarking.html
+https://medium.com/@maksym.lutskyi/a-comparative-analysis-of-mountpoint-for-s3-s3fs-and-goofys-9a097a25

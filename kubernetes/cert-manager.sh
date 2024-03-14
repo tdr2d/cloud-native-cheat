@@ -1,13 +1,13 @@
 #!/bin/sh
 
-# Prerequisites: Nginx Ingress Controller
+# Prerequisites: Install Nginx Ingress Controller
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 helm install ingress-nginx ingress-nginx/ingress-nginx
 kubectl get ingressclass
 # Make sure nginx ingress class exists
 
-# Prerequisites: CertManager
+# Prerequisites: Install CertManager
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
 helm install cert-manager jetstack/cert-manager -n cert-manager --create-namespace --version v1.11.0 --set installCRDs=true
