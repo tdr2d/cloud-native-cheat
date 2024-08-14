@@ -1,27 +1,32 @@
 #!/bin/bash
+set -euo pipefail
 
-set -eu
+# usage: sudo ./py.sh
+# usage: sudo ./py.sh 3.12.5
 
-readonly VERSION="${1-3.8.5}"
+readonly PY_VERSION="${1}"
 
-# usage: sudo ./py.sh 3.12.4
+# get latest version
+if [ -z "${PY_VERSION}" ]; then
+PY_VERSION=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/actions/python-versions/releases/latest | grep -o '[0-9]\.[0-9]*\.[0-9]*')
+echo "Latest version is: ${PY_VERSION}"
+fi
 
-
-# Prereq
-# Rhel based
-# yum install @development -y 
-# yum install zlib-devel -y
-
+# Prereq # Rhel based # yum install @development zlib-devel -y 
 # debian based
 apt update
 apt install build-essential zlib1g-dev libssl-dev -y
 
 
 # Build python
-curl -LO https://www.python.org/ftp/python/$VERSION/Python-$VERSION.tar.xz
-tar -xf Python-$VERSION.tar.xz
-cd Python-$VERSION
-./configure
+cd /tmp
+curl -LO https://www.python.org/ftp/python/$PY_VERSION/Python-$PY_VERSION.tar.xz
+tar -xf Python-$PY_VERSION.tar.xz
+cd Python-$PY_VERSION
+./configure --enable-optimizations
+make && make install
 
-make
-make install
+# Clean
+cd ..
+rm Python-$PY_VERSION.tar.xz
+rm -rf Python-$PY_VERSION
