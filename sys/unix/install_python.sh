@@ -1,10 +1,9 @@
 #!/bin/bash
-set -euo pipefail
+set -eo pipefail
 
 # usage: sudo ./py.sh
 # usage: sudo ./py.sh 3.12.5
-
-readonly PY_VERSION="${1}"
+PY_VERSION="${1}"
 
 # get latest version
 if [ -z "${PY_VERSION}" ]; then
