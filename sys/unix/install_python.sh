@@ -8,8 +8,14 @@ readonly VERSION="${1-3.8.5}"
 
 
 # Prereq
-yum install @development -y || apt install build-essential -y
-yum install zlib-devel -y   || apt-get install zlib1g-dev libssl-dev -y
+# Rhel based
+# yum install @development -y 
+# yum install zlib-devel -y
+
+# debian based
+apt update
+apt install build-essential zlib1g-dev libssl-dev -y
+
 
 # Build python
 curl -LO https://www.python.org/ftp/python/$VERSION/Python-$VERSION.tar.xz
