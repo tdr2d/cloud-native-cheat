@@ -14,8 +14,7 @@ fi
 # Prereq # Rhel based # yum install @development zlib-devel -y 
 # debian based
 apt update
-apt install build-essential zlib1g-dev libssl-dev -y
-
+apt install -y build-essential libsqlite3-dev zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libbz2-dev wget liblzma-dev
 
 # Build python
 cd /tmp
