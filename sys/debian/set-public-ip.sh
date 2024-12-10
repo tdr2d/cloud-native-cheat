@@ -4,6 +4,7 @@ set -eo pipefail
 
 ADDITIONAL_IP=${1}
 OUTPUT_FILE='/etc/netplan/51-cloud-init.yaml'
+INTERFACE='ens3'
 
 if [ -z ${ADDITIONAL_IP} ]; then
     echo "Wrong Usage: "
@@ -16,7 +17,7 @@ cat << EOF > $OUTPUT_FILE
 network:
   version: 2
   ethernets:
-    ens3:
+    ${INTERFACE}:
       dhcp4: true
       addresses:
         - ${ADDITIONAL_IP}/32
