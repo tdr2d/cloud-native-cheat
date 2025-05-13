@@ -1,5 +1,5 @@
 # NFS solutions on Linux
-**[nfs-ganesha](https://github.com/nfs-ganesha/nfs-ganesha/wiki/Setup)** comes as the first NFS server open-source solution, however is not completely mature according to a 2012 post from the nfs-kernel-server maintainer.
+**[nfs-ganesha](https://github.com/nfs-ganesha/nfs-ganesha/wiki/Setup)** comes as the first NFS server open-source solution.
 It does not provide its own clustering support, but HA can be achieved using Linux HA, via GlusterFS, or CephFS.
 It supports NFSv3 and NFSv4.
 
