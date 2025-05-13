@@ -34,10 +34,10 @@ We assume the latest version of NFS is better, so in the following benchmark, we
 
 
 # Linux NFS Replication solutions
-- Block level replication with DRBD 
+- Block level replication with DRBD (Seems tedious to do)
 - Filesystem level replication GlustserFS / Ceph (not recommended due to high complexity)
-- rsync to another NFS server (not recommended due to low performance)
-- ZFS native clustering capabilities
+- Rsync to another NFS server (not recommended due to low performance when synchronising delta)
+- Native clustering capabilities (ZFS)
 
 
 # NFS Backup
