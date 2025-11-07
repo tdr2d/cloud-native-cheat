@@ -1,0 +1,41 @@
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/proxy-body-size: 10G
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For"
+    nginx.ingress.kubernetes.io/client-body-buffer-size: 10m
+    nginx.ingress.kubernetes.io/proxy-body-size: 200m
+    nginx.ingress.kubernetes.io/proxy-max-temp-file-size: 10240m
+  tls:
+    - secretName: nextcloud-tls
+      # replace this with your DNS
+      hosts:
+        - drive.tdr2d.com
+
+nextcloud:
+  existingSecret:
+      enabled: true
+      secretName: nextcloud-env
+      usernameKey: username
+      passwordKey: password
+      tokenKey: token
+    
+  objectStore:
+    s3:
+      enabled: true
+      ssl: true
+      prefix: drive/
+      port: 443
+      region: gra
+      existingSecret: nextcloud-env
+      secretKeys:
+        host: s3_host
+        accessKey: s3_accessKey 
+        secretKey: s3_secretKey
+        bucket: s3_bucket 
+        sse_c_key: s3_sse_c_key 
+
+  defaultConfigs:
+    s3.config.php: true
