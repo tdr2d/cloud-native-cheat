@@ -1,20 +1,30 @@
-ingress:
+# image: 
+#   repository: nextcloud
+#   flavor: apache
+#   tag: 32.0.1
+
+# ingress:
+#   enabled: true
+#   annotations:
+#     cert-manager.io/cluster-issuer: letsencrypt
+#     nginx.ingress.kubernetes.io/proxy-body-size: 10G
+#     nginx.ingress.kubernetes.io/enable-cors: "true"
+#     nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For"
+#     nginx.ingress.kubernetes.io/client-body-buffer-size: 10m
+#     nginx.ingress.kubernetes.io/proxy-body-size: 200m
+#     nginx.ingress.kubernetes.io/proxy-max-temp-file-size: 10240m
+#   tls:
+#     - secretName: nextcloud-tls
+#       # replace this with your DNS
+#       hosts:
+#         - drive.tdr2d.com
+persistence:
   enabled: true
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt
-    nginx.ingress.kubernetes.io/proxy-body-size: 10G
-    nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For"
-    nginx.ingress.kubernetes.io/client-body-buffer-size: 10m
-    nginx.ingress.kubernetes.io/proxy-body-size: 200m
-    nginx.ingress.kubernetes.io/proxy-max-temp-file-size: 10240m
-  tls:
-    - secretName: nextcloud-tls
-      # replace this with your DNS
-      hosts:
-        - drive.tdr2d.com
+  storageClass: csi-cinder-high-speed
+  size: 1Gi
 
 nextcloud:
+  host: drive.tdr2d.com
   existingSecret:
       enabled: true
       secretName: nextcloud-env
@@ -32,8 +42,8 @@ nextcloud:
       existingSecret: nextcloud-env
       secretKeys:
         host: s3_host
-        accessKey: s3_accessKey 
-        secretKey: s3_secretKey
+        accessKey: s3_access_key 
+        secretKey: s3_secret_key
         bucket: s3_bucket 
         sse_c_key: s3_sse_c_key 
 

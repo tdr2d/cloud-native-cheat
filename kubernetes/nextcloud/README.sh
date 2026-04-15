@@ -31,3 +31,15 @@ k exec -it deploy/nextcloud -- tail -f data/nextcloud.log
 
 # Expose locally
 k port-forward svc/nextcloud 8080:8080
+
+
+# Test DRP
+Backing up the database
+1. Backup : 
+2. Restore :
+
+# S3 list files
+aws s3 ls --endpoint-url=https://s3.gra.io.cloud.ovh.net s3://tdr2d
+
+# S3 Delete files with prefix
+aws s3 rm --endpoint-url=https://s3.gra.io.cloud.ovh.net s3://tdr2d --recursive --exclude "*" --include "drive*"
