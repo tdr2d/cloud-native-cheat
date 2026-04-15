@@ -15,6 +15,9 @@ In production Keycloak would be better installed in http mode. Https would need 
 **Postgresql:**
 The suggested postgresql deployment by suitenumerique is not production ready. It lacks redondancy, backups, logging and doesn't emmit metrics to be monitored. I advocate for using a managed databases instead, or other production ready Helm Charts like the CrunchyData operator.
 
+**Helm charts values:**
+It is not a best practice to include secrets in the values of helm charts. It is much more secured to define them using Secrets.
+
 # Pre-requisites
 - kubectl and helm cli
 - A Kubernetes cluster
@@ -68,10 +71,10 @@ OIDC_RP_CLIENT_SECRET: ThisIsAnExampleKeyForDevPurposeOnly
 OIDC_RP_SIGN_ALGO: RS256
 OIDC_RP_SCOPES: "openid email"
 
-# S3
+# S3 vars example
 AWS_S3_ENDPOINT_URL: https://s3.gra.io.cloud.ovh.net
-AWS_S3_ACCESS_KEY_ID: 125d87abbe794390a1397c610eb1c6fa
-AWS_S3_SECRET_ACCESS_KEY: 821305c734ac48319832457e1b2b5f8d
+AWS_S3_ACCESS_KEY_ID: FIXME
+AWS_S3_SECRET_ACCESS_KEY: FIXME
 AWS_STORAGE_BUCKET_NAME: lasuite-test2
 
 ...
