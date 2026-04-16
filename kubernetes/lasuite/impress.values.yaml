@@ -48,20 +48,11 @@ backend:
     LOGIN_REDIRECT_URL: https://docs.127.0.0.1.nip.io
     LOGIN_REDIRECT_URL_FAILURE: https://docs.127.0.0.1.nip.io
     LOGOUT_REDIRECT_URL: https://docs.127.0.0.1.nip.io
-    DB_HOST: postgresql-dev-backend-postgres
-    DB_NAME:
-      secretKeyRef:
-        name: postgresql-dev-backend-postgres
-        key: database
-    DB_USER:
-      secretKeyRef:
-        name: postgresql-dev-backend-postgres
-        key: username
-    DB_PASSWORD:
-      secretKeyRef:
-        name: postgresql-dev-backend-postgres
-        key: password
-    DB_PORT: 5432
+    DB_HOST: postgresql-b57ec715-o992bd81e.database.cloud.ovh.net
+    DB_NAME: lasuite
+    DB_USER: avnadmin
+    DB_PASSWORD: 0PZUK9Jbxhm4wA32DdCS
+    DB_PORT: 20184
     REDIS_URL: redis://user:pass@redis-dev-backend-redis:6379/1
     DJANGO_CELERY_BROKER_URL: redis://user:pass@redis-dev-backend-redis:6379/1
 

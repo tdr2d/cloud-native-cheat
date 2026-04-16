@@ -52,6 +52,13 @@ helm install --repo https://suitenumerique.github.io/helm-dev-backend -f redis.v
 helm install --repo https://suitenumerique.github.io/helm-dev-backend -f postgresql.values.yaml postgresql dev-backend
 ```
 
+Postgresql is currently bugged (from pg logs)
+```
+initdb: error: directory "/var/lib/postgresql/data" exists but is not empty
+```
+We will use a managed Postgresql Database instead : https://help.ovhcloud.com/csm/en-ie-public-cloud-databases-getting-started?id=kb_article_view&sysparm_article=KB0048743
+Make sure the database is exposed to the kubernetes cluster nodes. You can open the traffic to all the private vlan 10.0.0.0/16.
+
 # Step 3 - S3 Object Storage 
 I will use a managed S3 solution by OVHCloud.
 https://help.ovhcloud.com/csm/en-ie-public-cloud-storage-s3-getting-started-object-storage?id=kb_article_view&sysparm_article=KB0047339
@@ -91,15 +98,18 @@ helm repo update
 helm install impress impress/docs -f impress.values.yaml
 
 kubectl get pods
-NAME                                          READY   STATUS              RESTARTS         AGE
-impress-docs-backend-7666bf99d8-c9gtf         0/1     ContainerCreating   0                4m9s
-impress-docs-backend-createsuperuser-h9j98    0/1     ContainerCreating   0                4m9s
-impress-docs-backend-migrate-vnpz4            0/1     ContainerCreating   0                4m9s
-impress-docs-celery-worker-669f989f5f-q9dmd   0/1     ContainerCreating   0                4m9s
-impress-docs-frontend-7f985d74c9-9822j        1/1     Running             0                4m9s
-impress-docs-y-provider-655bcff5bd-h6gkf      1/1     Running             0                4m9s
-keycloak-dev-backend-keycloak-0               1/1     Running             1 (59m ago)      59m
-keycloak-dev-backend-keycloak-pg-0            1/1     Running             0                59m
-postgresql-dev-backend-postgres-0             0/1     CrashLoopBackOff    12 (5m27s ago)   42m
-redis-dev-backend-redis-68c44c659f-hzgbg      1/1     Running             0                6h12m
+NAME                                          READY   STATUS              RESTARTS        AGE
+impress-docs-backend-58b899fb59-bf848         0/1     ContainerCreating   0               8m27s
+impress-docs-backend-createsuperuser-m2psx    0/1     ContainerCreating   0               8m27s
+impress-docs-backend-migrate-8pxfv            0/1     ContainerCreating   0               8m27s
+impress-docs-celery-worker-5cfb78c994-dlq4h   0/1     ContainerCreating   0               8m27s
+impress-docs-frontend-7f985d74c9-nhj7l        1/1     Running             0               8m27s
+impress-docs-y-provider-655bcff5bd-tmkzz      1/1     Running             0               8m27s
+keycloak-dev-backend-keycloak-0               1/1     Running             1 (88m ago)     88m
+keycloak-dev-backend-keycloak-pg-0            1/1     Running             0               88m
+postgresql-dev-backend-postgres-0             0/1     CrashLoopBackOff    18 (3m2s ago)   71m
+redis-dev-backend-redis-68c44c659f-hzgbg      1/1     Running             0               6h42m
 ```
+
+Impress pods are stuck at ContainerCreating
+
